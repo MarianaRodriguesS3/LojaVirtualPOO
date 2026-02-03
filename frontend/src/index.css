@@ -1,11 +1,10 @@
-/* index.css */
 html, body, #root {
   margin: 0;
   padding: 0;
   width: 100%;
   min-height: 100vh;
   font-family: Arial, sans-serif;
-  background-color: #f3f4f6;
+  background-color: #d6dce9;
 }
 
 main {

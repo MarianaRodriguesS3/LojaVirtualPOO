@@ -1,32 +1,37 @@
 import React from 'react';
+import '../App.css';
 
-// Ícones simples usando SVG embutido para evitar dependências extras
+// Ícones
 function CartIcon() {
   return (
-    <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24" >
-      <path d="M7 4h-2l-3 9v2h2v7h14v-7h2v-2l-3-9h-2l-1 2h-6l-1-2zm9.92 7l1.2-3h-10.24l1.2 3h7.84z"/>
+    <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+      <path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zm10 0c-1.1 0-1.99.9-1.99 2S15.9 22 17 22s2-.9 2-2-.9-2-2-2zM7.16 14h9.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49A1 1 0 0 0 21 5H6.21l-.94-2H2v2h2l3.6 7.59-1.35 2.44C5.52 16.37 6.48 18 8 18h12v-2H8l1.16-2z" />
     </svg>
   );
 }
 
 function UserIcon() {
   return (
-    <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
-      <path d="M12 12c2.67 0 8 1.34 8 4v4h-16v-4c0-2.66 5.33-4 8-4zm0-2c-1.38 0-2.5-1.12-2.5-2.5S10.62 5 12 5s2.5 1.12 2.5 2.5S13.38 10 12 10z"/>
+    <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"
+    >
+      <path d="M12 12a5 5 0 1 0-5-5 5 5 0 0 0 5 5zm0 2c-3.33 0-10 1.67-10 5v3h20v-3c0-3.33-6.67-5-10-5z" />
     </svg>
   );
 }
 
+
 function Header() {
   return (
-    <header style={styles.header}>
-      <nav style={styles.nav}>
-        <a href="/" style={{ ...styles.link, fontWeight: 'bold' }}>Home</a>
-        <div style={styles.rightMenu}>
-          <a href="/carrinho" style={styles.link}>
+    <header className="header">
+      <nav className="nav">
+        <a href="/" className="link bold">Home</a>
+
+        <div className="right-menu">
+          <a href="/carrinho" className="link">
             <CartIcon /> Carrinho
           </a>
-          <a href="/login" style={styles.link}>
+
+          <a href="/login" className="link">
             <UserIcon /> Fazer login
           </a>
         </div>
@@ -34,36 +39,5 @@ function Header() {
     </header>
   );
 }
-
-const styles = {
-  header: {
-    backgroundColor: '#f8fafc', // cor clara
-    padding: '10px 20px',
-    borderBottom: '1px solid #ddd',
-    position: 'sticky',
-    top: 0,
-    zIndex: 1000,
-  },
-  nav: {
-    maxWidth: '1200px',
-    margin: '0 auto',
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  rightMenu: {
-    display: 'flex',
-    gap: '20px',
-  },
-  link: {
-    color: '#1f2937', // cor escura
-    textDecoration: 'none',
-    fontSize: '16px',
-    display: 'flex',
-    alignItems: 'center',
-    gap: '5px',
-    cursor: 'pointer',
-  },
-};
 
 export default Header;
