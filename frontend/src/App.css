@@ -56,3 +56,94 @@
   font-size: 1rem;
   color: #4b5563;
 }
+
+/* Container da lista de produtos */
+.product-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+  padding: 20px;
+}
+
+/* Card do produto */
+.product-card {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  overflow: hidden;
+  transition: transform 0.2s, box-shadow 0.2s;
+  background-color: #fff;
+}
+
+.product-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+}
+
+/* Imagem do produto */
+.product-image img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+}
+
+/* Informações do produto */
+.product-info {
+  padding: 15px;
+}
+
+.product-info h3 {
+  margin: 0 0 10px;
+  font-size: 1.1rem;
+}
+
+.product-info p {
+  margin: 0 0 5px;
+  font-size: 0.9rem;
+  color: #555;
+}
+
+.product-info .price {
+  font-weight: bold;
+  color: #1a8917;
+}
+
+/* Container dos botões */
+.product-actions {
+  display: flex;
+  justify-content: center; /* centraliza os botões */
+  gap: 10px; /* espaço entre os botões */
+  padding: 15px; /* aumenta o padding do container */
+  border-top: 1px solid #eee; /* separa visualmente do card */
+  margin-top: auto; /* garante que fique no final do card */
+}
+
+/* Botões maiores e com padding */
+.product-actions button {
+  padding: 12px 20px; /* aumenta tamanho do botão */
+  font-size: 1rem;    /* aumenta o texto */
+  font-weight: bold;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+/* Botão Carrinho */
+.btn-cart {
+  background-color: #f0ad4e;
+  color: #fff;
+}
+
+.btn-cart:hover {
+  background-color: #ec971f;
+}
+
+/* Botão Comprar */
+.btn-buy {
+  background-color: #5cb85c;
+  color: #fff;
+}
+
+.btn-buy:hover {
+  background-color: #449d44;
+}

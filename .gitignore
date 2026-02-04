@@ -1,0 +1,36 @@
+# Node / NPM
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Build / Output
+dist/
+dist-ssr/
+
+# Environment / Config
+# .env
+# .env.local
+# .env.*.local
+
+# Logs
+logs
+*.log
+lerna-debug.log*
+
+# Editor / OS
+.vscode/
+!.vscode/extensions.json
+.idea/
+.DS_Store
+Thumbs.db
+Desktop.ini
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Optional workspace / misc
+*.code-workspace
