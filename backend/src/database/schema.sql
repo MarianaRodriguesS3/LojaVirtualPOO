@@ -21,10 +21,10 @@ USE lojavirtual;
 
 INSERT INTO products (name, description, price, image) VALUES
 ('Tênis Feminino Branco', 'Tênis feminino confortável branco.', 82.90, 'tenis1.jpeg'),
-('Tênis Masculino Preto', 'Tênis masculino casual preto.', 95.50, 'tenis2.jpeg'),
-('Tênis Unissex Azul', 'Tênis unissex esportivo azul.', 110.00, 'tenis3.jpeg'),
-('Tênis Infantil Vermelho', 'Tênis infantil resistente vermelho.', 60.00, 'tenis4.jpeg'),
-('Tênis Corrida Cinza', 'Tênis para corrida, leve e confortável.', 130.00, 'tenis5.jpeg'),
-('Tênis Casual Marrom', 'Tênis casual marrom para uso diário.', 78.90, 'tenis6.jpeg'),
-('Tênis Esportivo Verde', 'Tênis esportivo com solado reforçado.', 120.00, 'tenis7.jpeg'),
-('Tênis Fashion Rosa', 'Tênis fashion feminino rosa, muito estiloso.', 99.90, 'tenis8.jpeg');
+('Tênis All Star', 'Tênis All Star Azul.', 129.90, 'tenis2.jpeg'),
+('Tênis Nike', 'Tênis Nike Air Force.', 109.90, 'tenis3.jpeg'),
+('Tênis Vans', 'Sapatenis Deals Tênis Vans Unisex.', 89.90, 'tenis4.jpeg'),
+('Tênis Feminino Rose', 'Tênis Feminino Branco Rose Sara.', 109.90, 'tenis5.jpeg'),
+('Tênis Adidas', 'Tênis Adidas Feminino Grand Court.', 259.90, 'tenis6.jpeg'),
+('Tênis Branco Casual', 'Tênis Feminino Branco Casual.', 79.90, 'tenis7.jpeg'),
+('Tênis Shoes', 'Tênis Feminino Casual Original Shoes.', 99.90, 'tenis8.jpeg');

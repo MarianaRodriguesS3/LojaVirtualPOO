@@ -1,5 +1,6 @@
 import React from 'react';
 import '../App.css';
+import "./Header.css";
 
 // Ícones
 function CartIcon() {

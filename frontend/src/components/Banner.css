@@ -1,0 +1,20 @@
+.banner {
+  background-color: #fff;
+  max-width: 1200px;
+  margin: 20px auto;
+  padding: 30px 20px;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.banner-title {
+  margin: 0;
+  font-size: 1.8rem;
+  color: #1f2937;
+}
+
+.banner-subtitle {
+  margin-top: 10px;
+  font-size: 1rem;
+  color: #4b5563;
+}
