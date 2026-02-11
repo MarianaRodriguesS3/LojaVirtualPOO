@@ -3,18 +3,18 @@ import React, { createContext, useEffect, useState } from "react";
 // Cria o contexto do carrinho
 export const CartContext = createContext();
 
-// Provider que vai envolver a aplicação
+// Provider que envolve a aplicação
 export function CartProvider({ children }) {
-  // Estado do carrinho
+  // Estado do carrinho (persistido)
   const [cartItems, setCartItems] = useState(() => {
     const storedCart = localStorage.getItem("cart");
     return storedCart ? JSON.parse(storedCart) : [];
   });
 
-  // Estado para mensagens globais (ex: "Produto adicionado")
-  const [message, setMessage] = useState("");
+  // 🔥 Novo estado para o card de notificação
+  const [notification, setNotification] = useState(null);
 
-  // Salva o carrinho no localStorage sempre que ele muda
+  // Salva no localStorage sempre que o carrinho mudar
   useEffect(() => {
     localStorage.setItem("cart", JSON.stringify(cartItems));
   }, [cartItems]);
@@ -23,36 +23,49 @@ export function CartProvider({ children }) {
   function addToCart(product) {
     setCartItems((prev) => {
       const exists = prev.find((item) => item.id === product.id);
+
       if (exists) {
-        // Se o produto já existe, aumenta a quantidade
         return prev.map((item) =>
           item.id === product.id
             ? { ...item, quantity: item.quantity + 1 }
             : item
         );
       }
-      // Se não existe, adiciona novo produto com quantidade 1
+
       return [...prev, { ...product, quantity: 1 }];
     });
 
-    // Dispara mensagem de sucesso
-    setMessage(`Produto "${product.name}" adicionado ao carrinho ✅`);
-    setTimeout(() => setMessage(""), 2000); // some depois de 2s
+    // 🔥 Dispara o card lateral
+    setNotification({
+      product: {
+        id: product.id,
+        name: product.name,
+        image: product.image,
+        price: product.price,
+        size: product.size || "Único",
+      },
+    });
+
+    // Fecha automaticamente após 3 segundos
+    setTimeout(() => {
+      setNotification(null);
+    }, 3000);
   }
 
-  // Remove um produto do carrinho
+  // Remove produto
   function removeFromCart(id) {
     setCartItems((prev) => prev.filter((item) => item.id !== id));
   }
 
-  // Limpa todo o carrinho
+  // Limpa carrinho
   function clearCart() {
     setCartItems([]);
   }
 
-  // Atualiza a quantidade de um produto
+  // Atualiza quantidade
   function updateQuantity(id, quantity) {
-    if (quantity <= 0) return; // evita quantidade negativa
+    if (quantity <= 0) return;
+
     setCartItems((prev) =>
       prev.map((item) =>
         item.id === id ? { ...item, quantity } : item
@@ -60,7 +73,6 @@ export function CartProvider({ children }) {
     );
   }
 
-  // Valor fornecido pelo contexto
   return (
     <CartContext.Provider
       value={{
@@ -69,8 +81,8 @@ export function CartProvider({ children }) {
         removeFromCart,
         clearCart,
         updateQuantity,
-        message,
-        setMessage,
+        notification,   // 🔥 agora usamos notification
+        setNotification,
       }}
     >
       {children}

@@ -1,7 +1,6 @@
 import React, { useContext } from "react";
 import { CartContext } from "../context/CartContext";
-import "../App.css";
-import "./Cart.css";
+import "../pages/Cart.css"; 
 
 function Cart() {
   const { cartItems, removeFromCart, clearCart, updateQuantity } =
@@ -20,7 +19,7 @@ function Cart() {
     <div className="cart-container">
       <h1>Carrinho</h1>
 
-      {cartItems.map(item => (
+      {cartItems.map((item) => (
         <div className="cart-item" key={item.id}>
           <img
             src={`http://localhost:5000/images/${item.image}`}
@@ -48,7 +47,10 @@ function Cart() {
             <p>R$ {(item.price * item.quantity).toFixed(2)}</p>
           </div>
 
-          <button className="btn-remove" onClick={() => removeFromCart(item.id)}>
+          <button
+            className="btn-remove"
+            onClick={() => removeFromCart(item.id)}
+          >
             Remover
           </button>
         </div>

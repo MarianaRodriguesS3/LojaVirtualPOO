@@ -21,10 +21,7 @@ function ProductCard({ product }) {
       </div>
 
       <div className="product-actions">
-        <button
-          className="btn-cart"
-          onClick={() => addToCart(product)}
-        >
+        <button className="btn-cart" onClick={() => addToCart(product)}>
           Carrinho
         </button>
 

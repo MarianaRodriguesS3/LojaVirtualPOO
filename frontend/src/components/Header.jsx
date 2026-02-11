@@ -1,6 +1,5 @@
 import React from 'react';
-import '../App.css';
-import "./Header.css";
+import './Header.css';
 
 // Ícones
 function CartIcon() {
@@ -13,13 +12,11 @@ function CartIcon() {
 
 function UserIcon() {
   return (
-    <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"
-    >
+    <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
       <path d="M12 12a5 5 0 1 0-5-5 5 5 0 0 0 5 5zm0 2c-3.33 0-10 1.67-10 5v3h20v-3c0-3.33-6.67-5-10-5z" />
     </svg>
   );
 }
-
 
 function Header() {
   return (

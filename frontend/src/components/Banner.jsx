@@ -1,9 +1,7 @@
 import React from "react";
-import "../App.css";
 import "./Banner.css";
 
-function Banner({ products }) {
- 
+function Banner() {
   return (
     <section className="banner">
       <h1 className="banner-title">Bem-vindo à nossa loja virtual!</h1>
