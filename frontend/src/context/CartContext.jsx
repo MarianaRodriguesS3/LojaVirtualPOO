@@ -1,77 +1,67 @@
-import React, { createContext, useEffect, useState } from "react";
+import React, { createContext, useState, useEffect } from "react";
 
-// Cria o contexto do carrinho
 export const CartContext = createContext();
 
-// Provider que envolve a aplicação
-export function CartProvider({ children }) {
-  // Estado do carrinho (persistido)
+export const CartProvider = ({ children }) => {
+  // Inicializa o carrinho a partir do localStorage
   const [cartItems, setCartItems] = useState(() => {
-    const storedCart = localStorage.getItem("cart");
-    return storedCart ? JSON.parse(storedCart) : [];
+    const stored = localStorage.getItem("cartItems");
+    return stored ? JSON.parse(stored) : [];
   });
 
-  // 🔥 Novo estado para o card de notificação
   const [notification, setNotification] = useState(null);
 
-  // Salva no localStorage sempre que o carrinho mudar
+  // Salva carrinho no localStorage sempre que mudar
   useEffect(() => {
-    localStorage.setItem("cart", JSON.stringify(cartItems));
+    localStorage.setItem("cartItems", JSON.stringify(cartItems));
   }, [cartItems]);
 
-  // Adiciona produto ao carrinho
-  function addToCart(product) {
-    setCartItems((prev) => {
-      const exists = prev.find((item) => item.id === product.id);
+  // Adiciona produto ao carrinho (tratando id + size)
+  const addToCart = (product) => {
+    const existingItem = cartItems.find(
+      (item) => item.id === product.id && item.size === product.size
+    );
 
-      if (exists) {
-        return prev.map((item) =>
-          item.id === product.id
-            ? { ...item, quantity: item.quantity + 1 }
-            : item
-        );
-      }
+    let updatedCart;
 
-      return [...prev, { ...product, quantity: 1 }];
-    });
+    if (existingItem) {
+      // Atualiza a quantidade e move para o início
+      updatedCart = [
+        { ...existingItem, quantity: existingItem.quantity + 1 },
+        ...cartItems.filter(
+          (item) => !(item.id === product.id && item.size === product.size)
+        ),
+      ];
+    } else {
+      // Novo produto: adiciona no início
+      updatedCart = [{ ...product, quantity: 1 }, ...cartItems];
+    }
 
-    // 🔥 Dispara o card lateral
-    setNotification({
-      product: {
-        id: product.id,
-        name: product.name,
-        image: product.image,
-        price: product.price,
-        size: product.size || "Único",
-      },
-    });
+    setCartItems(updatedCart);
 
-    // Fecha automaticamente após 3 segundos
-    setTimeout(() => {
-      setNotification(null);
-    }, 3000);
-  }
+    // Notificação
+    setNotification({ product });
+  };
 
-  // Remove produto
-  function removeFromCart(id) {
-    setCartItems((prev) => prev.filter((item) => item.id !== id));
-  }
+  // Remove produto específico (id + size)
+  const removeFromCart = (id, size) => {
+    setCartItems(cartItems.filter((item) => !(item.id === id && item.size === size)));
+  };
 
-  // Limpa carrinho
-  function clearCart() {
-    setCartItems([]);
-  }
+  // Limpar carrinho
+  const clearCart = () => setCartItems([]);
 
-  // Atualiza quantidade
-  function updateQuantity(id, quantity) {
-    if (quantity <= 0) return;
-
-    setCartItems((prev) =>
-      prev.map((item) =>
-        item.id === id ? { ...item, quantity } : item
+  // Atualizar quantidade específica
+  const updateQuantity = (id, size, newQuantity) => {
+    if (newQuantity < 1) return;
+    setCartItems(
+      cartItems.map((item) =>
+        item.id === id && item.size === size
+          ? { ...item, quantity: newQuantity }
+          : item
       )
     );
-  }
+  };
 
   return (
     <CartContext.Provider
@@ -81,11 +71,11 @@ export function CartProvider({ children }) {
         removeFromCart,
         clearCart,
         updateQuantity,
-        notification,   // 🔥 agora usamos notification
+        notification,
         setNotification,
       }}
     >
       {children}
     </CartContext.Provider>
   );
-}
+};

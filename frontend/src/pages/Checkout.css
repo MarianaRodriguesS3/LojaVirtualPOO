@@ -1,0 +1,81 @@
+/* Layout Principal do Checkout */
+.checkout-layout-grid {
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* Distribui as 3 posições */
+  gap: 30px;
+  padding: 30px;
+}
+
+/* Coluna 1: Imagem */
+.checkout-col-image img {
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 10px;
+}
+
+/* Coluna 2: Seletores (Tamanho acima de Quantidade) */
+.checkout-col-selectors {
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Centraliza os botões horizontalmente */
+  gap: 25px; /* Espaço entre o seletor de tamanho e o de quantidade */
+  flex: 1;
+}
+
+.size-selector {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+}
+
+.size-btn {
+  width: 35px;
+  height: 35px;
+  border: 1px solid #bbc4d6;
+  background: white;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: 0.2s;
+}
+
+.size-btn.selected {
+  background: #0a014e;
+  color: white;
+  border-color: #011121;
+}
+
+.checkout-col-selectors .quantity-control {
+  justify-content: center; /* Garante que o + e - fiquem centralizados */
+}
+
+/* Coluna 3: Nome e Preço (Nome acima do Preço) */
+.checkout-col-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Centraliza texto e preço */
+  gap: 15px;
+  flex: 1;
+  text-align: center;
+}
+
+.checkout-col-info h3 {
+  margin: 0;
+  font-size: 1.2rem;
+  color: #222;
+}
+
+.checkout-col-info .price {
+  margin: 0;
+  font-size: 1.3rem;
+  font-weight: bold;
+  color: #333;
+}
+
+/* Ajuste do botão de finalizar */
+.btn-finalize:disabled {
+  background-color: #aeb9cc;
+  cursor: not-allowed;
+}

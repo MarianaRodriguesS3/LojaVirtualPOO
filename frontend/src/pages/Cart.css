@@ -1,148 +1,157 @@
-/* Fundo da página */
+/* Layout Geral */
 .cart-container {
-  max-width: 900px;
+  max-width: 950px;
   margin: 60px auto;
-  padding: 0 20px;
-  background-color: #d6dce9; /* fundo da página */
+  padding: 30px;
+  background-color: #d6dce9;
+  border-radius: 15px;
 }
 
 .cart-container h1 {
   margin-bottom: 30px;
-  font-size: 28px;
-  font-weight: 600;
-  color: #222;
+  font-size: 32px;
+  color: #1a1a1a;
 }
 
-/* Card do produto */
+/* Card do Item */
 .cart-item {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 20px;
   padding: 20px;
-  margin-bottom: 20px;
-  background: #e9edf4; /* fundo do card */
+  margin-bottom: 15px;
+  background: #fdfdfd;
   border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.cart-item:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
 }
 
 .cart-item img {
   width: 100px;
   height: 100px;
   object-fit: cover;
-  border-radius: 10px;
+  border-radius: 8px;
 }
 
-/* Informações do produto */
+/* Informações alinhadas verticalmente */
 .cart-info {
-  flex: 1;
+  flex: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 10px; /* Espaço igual entre Nome, Tamanho e Preço */
 }
 
-.cart-info h3 {
-  margin: 0 0 10px 0;
-  font-size: 18px;
-  font-weight: 600;
-  color: #222;
+.cart-info h3, .cart-info p { margin: 0; }
+
+.cart-size {
+  color: #666;
+  font-size: 0.9rem;
 }
 
-.cart-info p {
-  font-size: 16px;
+.price {
   font-weight: bold;
-  margin-top: 10px;
   color: #333;
 }
 
-/* Controle de quantidade */
+/* Quantidade Centralizada */
 .quantity-control {
+  flex: 1;
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 12px;
-  margin-top: 8px;
 }
 
 .quantity-control button {
-  width: 35px;
-  height: 35px;
-  border: none;
-  background: #f0f0f0;
-  border-radius: 6px;
+  width: 32px;
+  height: 32px;
+  border: 1px solid #ccc;
+  background: white;
+  border-radius: 4px;
   cursor: pointer;
-  font-size: 18px;
-  font-weight: bold;
-  transition: 0.2s;
-}
-
-.quantity-control button:hover {
-  background: #000;
-  color: #fff;
 }
 
 .quantity-control span {
-  min-width: 25px;
-  text-align: center;
   font-weight: 600;
-  font-size: 16px;
-  color: #222;
+  min-width: 20px;
+  text-align: center;
 }
 
-/* Botão remover */
+/* Ações Individuais (Direita do Card) */
+.cart-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.btn-buy-single {
+  background: #022307;
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
 .btn-remove {
-  border: none;
   background: #e53935;
-  color: #fff;
-  padding: 8px 14px;
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 4px;
   cursor: pointer;
-  border-radius: 6px;
-  font-weight: 500;
-  transition: 0.2s;
 }
 
-.btn-remove:hover {
-  background: #c62828;
+/* SEÇÃO TOTAL (ALINHADA NO CANTO INFERIOR DIREITO) */
+.cart-total-section {
+  margin-top: 30px;
+  display: flex;
+  justify-content: flex-end; /* Empurra tudo para a direita */
 }
 
-/* Total do carrinho */
-.cart-total {
-  margin-top: 40px;
-  padding: 25px;
-  background: #e9edf4; /* mesmo fundo dos cards */
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-  text-align: right;
+.total-content {
+  text-align: right; /* Alinha o texto do h2 à direita */
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
 }
 
-.cart-total h2 {
+.total-content h2 {
+  font-size: 1.8rem;
   margin: 0;
-  font-size: 22px;
   color: #222;
 }
 
-/* Botão limpar carrinho */
+.total-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
 .btn-clear {
-  margin-top: 15px;
-  padding: 10px 18px;
   background: #757575;
-  color: #fff;
+  color: white;
   border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
   cursor: pointer;
-  border-radius: 8px;
-  font-weight: 500;
-  transition: 0.2s;
 }
 
-.btn-clear:hover {
-  background: #424242;
+.btn-finalize {
+  background: #388e3c;
+  color: white;
+  border: none;
+  padding: 10px 25px;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
 }
 
-/* Mensagem carrinho vazio */
+.btn-finalize:hover { background: #2e7d32; }
+.btn-clear:hover { background: #616161; }
+
 .empty-cart {
   text-align: center;
-  margin-top: 100px;
-  font-size: 1.6rem;
+  padding: 50px;
   color: #555;
 }
