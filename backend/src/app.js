@@ -2,29 +2,17 @@ const express = require('express');
 const cors = require('cors');
 const path = require('path');
 
-// Rotas
 const productRoutes = require('./routes/productRoutes');
-const authRoutes = require('./routes/authRoutes'); // 👈 NOVO
+const usuarioRoutes = require('./routes/usuarioRoutes'); // aqui mudamos
 
 const app = express();
-
 app.use(cors());
 app.use(express.json());
 
-// 🔥 servir imagens estáticas
-app.use(
-  '/images',
-  express.static(path.join(__dirname, '../public/images'))
-);
+app.use('/images', express.static(path.join(__dirname, '../public/images')));
 
-// ==========================
-// ROTAS DA API
-// ==========================
-
-// Produtos (pública)
+// Rotas
 app.use('/api/products', productRoutes);
-
-// Autenticação (login / cadastro)
-app.use('/api/auth', authRoutes); // 👈 NOVO
+app.use('/api/usuario', usuarioRoutes); // rota URL: /api/usuario
 
 module.exports = app;

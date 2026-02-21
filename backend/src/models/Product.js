@@ -1,30 +1,33 @@
-const db = require('../database/connection');
-
 class Product {
+  #name;
+  #description;
+  #price;
+  #image;
+
   constructor(name, description, price, image) {
-    this.name = name;
-    this.description = description || null;
-    this.price = price;
-    this.image = image;
+    this.#name = name;
+    this.#description = description || null;
+    this.#price = price;
+    this.#image = image;
   }
 
-  // Salvar novo produto no banco
-  async save() {
-    const sql = `
-      INSERT INTO products (name, description, price, image)
-      VALUES (?, ?, ?, ?)
-    `;
-    const values = [this.name, this.description, this.price, this.image];
+  get name() { return this.#name; }
+  get description() { return this.#description; }
+  get price() { return this.#price; }
+  get image() { return this.#image; }
 
-    const [result] = await db.execute(sql, values);
-    return result;
-  }
+  set name(value) { this.#name = value; }
+  set description(value) { this.#description = value; }
+  set price(value) { this.#price = value; }
+  set image(value) { this.#image = value; }
 
-  // Buscar todos os produtos
-  static async findAll() {
-    // Confere se a tabela existe
-    const [rows] = await db.query('SELECT * FROM products');
-    return rows;
+  toJSON() {
+    return {
+      name: this.#name,
+      description: this.#description,
+      price: this.#price,
+      image: this.#image
+    };
   }
 }
 

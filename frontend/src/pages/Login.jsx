@@ -12,7 +12,8 @@ function Login() {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const res = await api.post("/auth/login", { email, password });
+      // Alterado de "/auth/login" para "/usuario/login"
+      const res = await api.post("/usuario/login", { email, password });
 
       // Salva token e usuário no localStorage
       localStorage.setItem("token", res.data.token);
