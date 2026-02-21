@@ -28,3 +28,14 @@ INSERT INTO products (name, description, price, image) VALUES
 ('Tênis Adidas', 'Tênis Adidas Feminino Grand Court.', 259.90, 'tenis6.jpeg'),
 ('Tênis Branco Casual', 'Tênis Feminino Branco Casual.', 79.90, 'tenis7.jpeg'),
 ('Tênis Shoes', 'Tênis Feminino Casual Original Shoes.', 99.90, 'tenis8.jpeg');
+
+
+-- cadastro de usuários 
+
+CREATE TABLE users (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  nome VARCHAR(255) NOT NULL,
+  email VARCHAR(255) NOT NULL UNIQUE,
+  password VARCHAR(255) NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);

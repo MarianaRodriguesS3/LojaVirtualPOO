@@ -67,6 +67,8 @@
 
 .size-btn:hover {
   border-color: #000;
+  color: white;
+  background-color: #090243;
 }
 
 .size-btn.selected {

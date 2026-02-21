@@ -1,7 +1,8 @@
-import React from 'react';
-import './Header.css';
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import "./Header.css";
 
-// Ícones
+// Ícones simples
 function CartIcon() {
   return (
     <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
@@ -19,22 +20,104 @@ function UserIcon() {
 }
 
 function Header() {
+  const [usuario, setUsuario] = useState(null);
+  const [mostrarMenu, setMostrarMenu] = useState(false);
+  const [mostrarBoasVindas, setMostrarBoasVindas] = useState(false);
+  const navigate = useNavigate();
+
+  // Carrega usuário do localStorage
+  const loadUser = () => {
+    const userSalvo = localStorage.getItem("usuario");
+    if (userSalvo && userSalvo !== "undefined") {
+      try {
+        setUsuario(JSON.parse(userSalvo));
+      } catch {
+        localStorage.removeItem("usuario");
+        setUsuario(null);
+      }
+    }
+  };
+
+  useEffect(() => {
+    loadUser();
+
+    // Escuta login na mesma aba
+    const handleUserLoggedIn = () => {
+      loadUser();
+    };
+
+    window.addEventListener("userLoggedIn", handleUserLoggedIn);
+
+    return () => {
+      window.removeEventListener("userLoggedIn", handleUserLoggedIn);
+    };
+  }, []);
+
+  // Mensagem de boas-vindas
+  useEffect(() => {
+    if (usuario && sessionStorage.getItem("loginRecente")) {
+      setMostrarBoasVindas(true);
+      sessionStorage.removeItem("loginRecente");
+
+      const timer = setTimeout(() => {
+        setMostrarBoasVindas(false);
+      }, 3000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [usuario]);
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("usuario");
+    setUsuario(null);
+    setMostrarMenu(false);
+    navigate("/");
+  };
+
   return (
-    <header className="header">
-      <nav className="nav">
-        <a href="/" className="link bold">Home</a>
+    <>
+      <header className="header">
+        <nav className="nav">
+          <button className="link bold" onClick={() => navigate("/")}>
+            Home
+          </button>
 
-        <div className="right-menu">
-          <a href="/carrinho" className="link">
-            <CartIcon /> Carrinho
-          </a>
+          <div className="right-menu">
+            <button className="link" onClick={() => navigate("/carrinho")}>
+              <CartIcon /> Carrinho
+            </button>
 
-          <a href="/login" className="link">
-            <UserIcon /> Fazer login
-          </a>
+            {!usuario ? (
+              <button className="link" onClick={() => navigate("/login")}>
+                <UserIcon /> Fazer login
+              </button>
+            ) : (
+              <div className="user-area">
+                <button
+                  className="user-button"
+                  onClick={() => setMostrarMenu(!mostrarMenu)}
+                >
+                  <UserIcon /> {usuario.nome}
+                </button>
+
+                {mostrarMenu && (
+                  <div className="dropdown">
+                    <button onClick={handleLogout}>Sair</button>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        </nav>
+      </header>
+
+      {mostrarBoasVindas && (
+        <div className="boas-vindas">
+          Bem vindo(a) {usuario?.nome}!
         </div>
-      </nav>
-    </header>
+      )}
+    </>
   );
 }
 

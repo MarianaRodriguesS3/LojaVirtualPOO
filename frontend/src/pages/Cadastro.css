@@ -1,0 +1,81 @@
+/* Layout geral da página de cadastro */
+.register-container {
+  max-width: 400px;
+  margin: 80px auto;
+  padding: 30px;
+  background-color: #d6dce9;
+  border-radius: 15px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+  display: flex;
+  flex-direction: column;
+}
+
+/* Título */
+.register-container h1 {
+  font-size: 28px;
+  color: #1a1a1a;
+  margin-bottom: 25px;
+  text-align: center;
+}
+
+/* Formulário */
+.register-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Campos de input */
+.register-form input {
+  padding: 12px 15px;
+  font-size: 1rem;
+  border: 1px solid #bbc4d6;
+  border-radius: 8px;
+  outline: none;
+  transition: 0.2s;
+}
+
+.register-form input:focus {
+  border-color: #0a014e;
+  box-shadow: 0 0 5px rgba(10,1,78,0.2);
+}
+
+/* Botão Cadastrar */
+.register-form button {
+  padding: 12px;
+  background-color: #022307;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.register-form button:hover {
+  background-color: #011b04;
+}
+
+/* Mensagem de erro */
+.register-error {
+  color: #e53935;
+  font-size: 0.9rem;
+  margin-top: -10px;
+}
+
+/* Botão "Voltar" alinhado à direita */
+.back-button {
+  margin-top: 30px;
+  align-self: flex-end; /* empurra para a direita */
+  background-color: #757575;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.back-button:hover {
+  background-color: #616161;
+}

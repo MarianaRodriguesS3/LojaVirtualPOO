@@ -1,7 +1,10 @@
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
+
+// Rotas
 const productRoutes = require('./routes/productRoutes');
+const authRoutes = require('./routes/authRoutes'); // 👈 NOVO
 
 const app = express();
 
@@ -14,7 +17,14 @@ app.use(
   express.static(path.join(__dirname, '../public/images'))
 );
 
-// rotas da API
+// ==========================
+// ROTAS DA API
+// ==========================
+
+// Produtos (pública)
 app.use('/api/products', productRoutes);
+
+// Autenticação (login / cadastro)
+app.use('/api/auth', authRoutes); // 👈 NOVO
 
 module.exports = app;

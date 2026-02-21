@@ -1,64 +1,79 @@
 import React, { createContext, useState, useEffect } from "react";
 
+// Cria o contexto
 export const CartContext = createContext();
 
+// Provider que vai envolver a aplicação
 export const CartProvider = ({ children }) => {
-  // Inicializa o carrinho a partir do localStorage
-  const [cartItems, setCartItems] = useState(() => {
-    const stored = localStorage.getItem("cartItems");
-    return stored ? JSON.parse(stored) : [];
-  });
-
+  const [cartItems, setCartItems] = useState([]);
   const [notification, setNotification] = useState(null);
 
-  // Salva carrinho no localStorage sempre que mudar
+  // Função para pegar o usuário logado
+  const getUserId = () => {
+    const user = JSON.parse(localStorage.getItem("usuario"));
+    return user?.id || null;
+  };
+
+  // Carrega carrinho do localStorage por usuário
   useEffect(() => {
-    localStorage.setItem("cartItems", JSON.stringify(cartItems));
+    const userId = getUserId();
+    if (userId) {
+      const stored = localStorage.getItem(`cart_${userId}`);
+      setCartItems(stored ? JSON.parse(stored) : []);
+    }
+  }, []);
+
+  // Salva carrinho sempre que mudar
+  useEffect(() => {
+    const userId = getUserId();
+    if (userId) {
+      localStorage.setItem(`cart_${userId}`, JSON.stringify(cartItems));
+    }
   }, [cartItems]);
 
-  // Adiciona produto ao carrinho (tratando id + size)
+  // Atualiza carrinho quando usuário loga
+  useEffect(() => {
+    const handleLogin = () => {
+      const userId = getUserId();
+      const stored = localStorage.getItem(`cart_${userId}`);
+      setCartItems(stored ? JSON.parse(stored) : []);
+    };
+
+    window.addEventListener("userLoggedIn", handleLogin);
+    return () => window.removeEventListener("userLoggedIn", handleLogin);
+  }, []);
+
+  // Funções do carrinho
   const addToCart = (product) => {
-    const existingItem = cartItems.find(
+    const existing = cartItems.find(
       (item) => item.id === product.id && item.size === product.size
     );
-
     let updatedCart;
 
-    if (existingItem) {
-      // Atualiza a quantidade e move para o início
-      updatedCart = [
-        { ...existingItem, quantity: existingItem.quantity + 1 },
-        ...cartItems.filter(
-          (item) => !(item.id === product.id && item.size === product.size)
-        ),
-      ];
+    if (existing) {
+      updatedCart = cartItems.map((item) =>
+        item.id === product.id && item.size === product.size
+          ? { ...item, quantity: item.quantity + 1 }
+          : item
+      );
     } else {
-      // Novo produto: adiciona no início
-      updatedCart = [{ ...product, quantity: 1 }, ...cartItems];
+      updatedCart = [...cartItems, { ...product, quantity: 1 }];
     }
 
     setCartItems(updatedCart);
-
-    // Notificação
     setNotification({ product });
   };
 
-  // Remove produto específico (id + size)
-  const removeFromCart = (id, size) => {
+  const removeFromCart = (id, size) =>
     setCartItems(cartItems.filter((item) => !(item.id === id && item.size === size)));
-  };
 
-  // Limpar carrinho
   const clearCart = () => setCartItems([]);
 
-  // Atualizar quantidade específica
-  const updateQuantity = (id, size, newQuantity) => {
-    if (newQuantity < 1) return;
+  const updateQuantity = (id, size, quantity) => {
+    if (quantity < 1) return;
     setCartItems(
       cartItems.map((item) =>
-        item.id === id && item.size === size
-          ? { ...item, quantity: newQuantity }
-          : item
+        item.id === id && item.size === size ? { ...item, quantity } : item
       )
     );
   };
