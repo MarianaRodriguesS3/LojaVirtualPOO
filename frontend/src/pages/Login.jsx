@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import api from "../services/api";
+import { CartContext } from "../context/CartContext";
 import "./Login.css";
 
 function Login() {
@@ -9,23 +10,33 @@ function Login() {
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
+  // Importamos a função que lida com a troca segura de carrinhos
+  const { updateUserToken } = useContext(CartContext);
+
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      // Alterado de "/auth/login" para "/usuario/login"
+      // 1. Chamada à API
       const res = await api.post("/usuario/login", { email, password });
 
-      // Salva token e usuário no localStorage
+      // 2. SEGURANÇA: Usamos o ID do usuário (ou email) para isolar o carrinho
+      // Isso impede que o carrinho de um usuário vaze para outro.
+      const userIdentifier = res.data.user.id || res.data.user.email;
+
+      // 3. Atualiza o contexto (Limpa o estado anterior e carrega o do novo usuário)
+      updateUserToken(userIdentifier.toString());
+
+      // 4. Salva credenciais no localStorage
       localStorage.setItem("token", res.data.token);
       localStorage.setItem("usuario", JSON.stringify(res.data.user));
 
-      // Marca login recente para mostrar boas-vindas
+      // 5. Marcação de login recente (mantido do seu original)
       sessionStorage.setItem("loginRecente", "true");
 
-      // Dispara evento para Header atualizar imediatamente
+      // 6. Evento para atualizar Header (mantido do seu original)
       window.dispatchEvent(new Event("userLoggedIn"));
 
-      // Redireciona para home
+      // 7. Redireciona para home
       navigate("/");
     } catch (err) {
       setError(err.response?.data?.message || "Erro no login");
@@ -41,12 +52,14 @@ function Login() {
           placeholder="Email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
+          required
         />
         <input
           type="password"
           placeholder="Senha"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
+          required
         />
         <button type="submit">Entrar</button>
       </form>

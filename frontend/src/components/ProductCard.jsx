@@ -4,28 +4,36 @@ import { CartContext } from "../context/CartContext";
 import "./ProductCard.css";
 
 function ProductCard({ product }) {
-  const { addToCart } = useContext(CartContext);
+  const { addToCart, userToken } = useContext(CartContext);
   const [selectedSize, setSelectedSize] = useState(null);
   const [sizeError, setSizeError] = useState("");
-  const cardRef = useRef(null); // referência ao card
+  const cardRef = useRef(null);
   const navigate = useNavigate();
 
   const sizes = [36, 37, 38, 39, 40];
 
-  // Adiciona produto ao carrinho
   const handleAddToCart = () => {
+    if (userToken === "guest") {
+      navigate("/login");
+      return;
+    }
+
     if (!selectedSize) {
       setSizeError("Selecione um tamanho!");
       return;
     }
 
     addToCart({ ...product, size: selectedSize });
-    setSelectedSize(null); // limpa seleção
+    setSelectedSize(null);
     setSizeError("");
   };
 
-  // Redireciona para página de compra (Checkout)
   const handleBuyNow = () => {
+    if (userToken === "guest") {
+      navigate("/login");
+      return;
+    }
+
     if (!selectedSize) {
       setSizeError("Selecione um tamanho!");
       return;
@@ -36,26 +44,20 @@ function ProductCard({ product }) {
     });
   };
 
-  // Mensagem de erro desaparece após 5s
   useEffect(() => {
     if (!sizeError) return;
     const timer = setTimeout(() => setSizeError(""), 5000);
     return () => clearTimeout(timer);
   }, [sizeError]);
 
-  // Limpa seleção de tamanho ao clicar fora do card
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (cardRef.current && !cardRef.current.contains(event.target)) {
         setSelectedSize(null);
       }
     };
-
     document.addEventListener("click", handleClickOutside);
-
-    return () => {
-      document.removeEventListener("click", handleClickOutside);
-    };
+    return () => document.removeEventListener("click", handleClickOutside);
   }, []);
 
   return (

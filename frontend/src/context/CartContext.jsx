@@ -1,82 +1,120 @@
 import React, { createContext, useState, useEffect } from "react";
 
-// Cria o contexto
 export const CartContext = createContext();
 
-// Provider que vai envolver a aplicação
 export const CartProvider = ({ children }) => {
-  const [cartItems, setCartItems] = useState([]);
+  const [userToken, setUserToken] = useState(() => {
+    return localStorage.getItem("cart_user_id") || "guest";
+  });
+
+  const [cartItems, setCartItems] = useState(() => {
+    const activeId = localStorage.getItem("cart_user_id") || "guest";
+    const stored = localStorage.getItem(`cartItems_${activeId}`);
+    return stored ? JSON.parse(stored) : [];
+  });
+
   const [notification, setNotification] = useState(null);
 
-  // Função para pegar o usuário logado
-  const getUserId = () => {
-    const user = JSON.parse(localStorage.getItem("usuario"));
-    return user?.id || null;
-  };
-
-  // Carrega carrinho do localStorage por usuário
   useEffect(() => {
-    const userId = getUserId();
-    if (userId) {
-      const stored = localStorage.getItem(`cart_${userId}`);
-      setCartItems(stored ? JSON.parse(stored) : []);
-    }
-  }, []);
+    localStorage.setItem(`cartItems_${userToken}`, JSON.stringify(cartItems));
+  }, [cartItems, userToken]);
 
-  // Salva carrinho sempre que mudar
-  useEffect(() => {
-    const userId = getUserId();
-    if (userId) {
-      localStorage.setItem(`cart_${userId}`, JSON.stringify(cartItems));
-    }
-  }, [cartItems]);
-
-  // Atualiza carrinho quando usuário loga
-  useEffect(() => {
-    const handleLogin = () => {
-      const userId = getUserId();
-      const stored = localStorage.getItem(`cart_${userId}`);
-      setCartItems(stored ? JSON.parse(stored) : []);
-    };
-
-    window.addEventListener("userLoggedIn", handleLogin);
-    return () => window.removeEventListener("userLoggedIn", handleLogin);
-  }, []);
-
-  // Funções do carrinho
   const addToCart = (product) => {
-    const existing = cartItems.find(
-      (item) => item.id === product.id && item.size === product.size
-    );
-    let updatedCart;
-
-    if (existing) {
-      updatedCart = cartItems.map((item) =>
-        item.id === product.id && item.size === product.size
-          ? { ...item, quantity: item.quantity + 1 }
-          : item
+    setCartItems((prev) => {
+      const existingItem = prev.find(
+        (item) =>
+          item.id === product.id &&
+          item.size === product.size &&
+          item.name === product.name
       );
-    } else {
-      updatedCart = [...cartItems, { ...product, quantity: 1 }];
-    }
 
-    setCartItems(updatedCart);
+      if (existingItem) {
+        const filteredCart = prev.filter(
+          (item) =>
+            !(
+              item.id === product.id &&
+              item.size === product.size &&
+              item.name === product.name
+            )
+        );
+
+        return [
+          { ...existingItem, quantity: existingItem.quantity + 1 },
+          ...filteredCart,
+        ];
+      }
+
+      return [{ ...product, quantity: 1 }, ...prev];
+    });
+
     setNotification({ product });
   };
 
-  const removeFromCart = (id, size) =>
-    setCartItems(cartItems.filter((item) => !(item.id === id && item.size === size)));
+  const updateUserToken = (newUserId) => {
+    const nextId = newUserId || "guest";
+    const currentId = userToken;
 
-  const clearCart = () => setCartItems([]);
+    localStorage.setItem(`cartItems_${currentId}`, JSON.stringify(cartItems));
 
-  const updateQuantity = (id, size, quantity) => {
-    if (quantity < 1) return;
-    setCartItems(
-      cartItems.map((item) =>
-        item.id === id && item.size === size ? { ...item, quantity } : item
+    setCartItems([]);
+
+    const storedTargetItems = JSON.parse(
+      localStorage.getItem(`cartItems_${nextId}`) || "[]"
+    );
+
+    let finalCart;
+    if (nextId !== "guest" && currentId === "guest") {
+      const guestItems = [...cartItems];
+      const userItems = [...storedTargetItems];
+
+      guestItems.forEach((gItem) => {
+        const existsIndex = userItems.findIndex(
+          (uItem) =>
+            uItem.id === gItem.id &&
+            uItem.size === gItem.size &&
+            uItem.name === gItem.name
+        );
+
+        if (existsIndex > -1) {
+          const existingInUser = userItems.splice(existsIndex, 1)[0];
+          userItems.unshift({
+            ...existingInUser,
+            quantity: existingInUser.quantity + gItem.quantity,
+          });
+        } else {
+          userItems.unshift(gItem);
+        }
+      });
+      finalCart = userItems;
+    } else {
+      finalCart = storedTargetItems;
+    }
+
+    localStorage.setItem("cart_user_id", nextId);
+    setUserToken(nextId);
+    setCartItems(finalCart);
+  };
+
+  const removeFromCart = (id, size, name) => {
+    setCartItems((prev) =>
+      prev.filter((i) => !(i.id === id && i.size === size && i.name === name))
+    );
+  };
+
+  const updateQuantity = (id, size, name, newQty) => {
+    if (newQty < 1) return;
+    setCartItems((prev) =>
+      prev.map((i) =>
+        i.id === id && i.size === size && i.name === name
+          ? { ...i, quantity: newQty }
+          : i
       )
     );
   };
+
+  const clearCart = () => setCartItems([]);
+
+  const logout = () => updateUserToken("guest");
 
   return (
     <CartContext.Provider
@@ -84,10 +122,13 @@ export const CartProvider = ({ children }) => {
         cartItems,
         addToCart,
         removeFromCart,
-        clearCart,
         updateQuantity,
+        clearCart,
         notification,
         setNotification,
+        userToken,
+        updateUserToken,
+        logout,
       }}
     >
       {children}

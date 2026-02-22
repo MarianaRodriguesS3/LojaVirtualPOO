@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { CartContext } from "../context/CartContext";
 import "./Header.css";
 
-// Ícones simples
 function CartIcon() {
   return (
     <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
@@ -20,49 +20,26 @@ function UserIcon() {
 }
 
 function Header() {
+  const { userToken, logout } = useContext(CartContext);
   const [usuario, setUsuario] = useState(null);
   const [mostrarMenu, setMostrarMenu] = useState(false);
   const [mostrarBoasVindas, setMostrarBoasVindas] = useState(false);
   const navigate = useNavigate();
 
-  // Carrega usuário do localStorage
-  const loadUser = () => {
-    const userSalvo = localStorage.getItem("usuario");
-    if (userSalvo && userSalvo !== "undefined") {
-      try {
-        setUsuario(JSON.parse(userSalvo));
-      } catch {
-        localStorage.removeItem("usuario");
-        setUsuario(null);
-      }
-    }
-  };
-
   useEffect(() => {
-    loadUser();
+    if (userToken !== "guest") {
+      const userSalvo = localStorage.getItem("usuario");
+      setUsuario(userSalvo ? JSON.parse(userSalvo) : null);
+    } else {
+      setUsuario(null);
+    }
+  }, [userToken]);
 
-    // Escuta login na mesma aba
-    const handleUserLoggedIn = () => {
-      loadUser();
-    };
-
-    window.addEventListener("userLoggedIn", handleUserLoggedIn);
-
-    return () => {
-      window.removeEventListener("userLoggedIn", handleUserLoggedIn);
-    };
-  }, []);
-
-  // Mensagem de boas-vindas
   useEffect(() => {
     if (usuario && sessionStorage.getItem("loginRecente")) {
       setMostrarBoasVindas(true);
       sessionStorage.removeItem("loginRecente");
-
-      const timer = setTimeout(() => {
-        setMostrarBoasVindas(false);
-      }, 3000);
-
+      const timer = setTimeout(() => setMostrarBoasVindas(false), 3000);
       return () => clearTimeout(timer);
     }
   }, [usuario]);
@@ -70,9 +47,9 @@ function Header() {
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("usuario");
-    setUsuario(null);
     setMostrarMenu(false);
-    navigate("/");
+    logout();
+    navigate("/", { replace: true }); // FORÇA ir para a Home
   };
 
   return (
@@ -113,9 +90,7 @@ function Header() {
       </header>
 
       {mostrarBoasVindas && (
-        <div className="boas-vindas">
-          Bem vindo(a) {usuario?.nome}!
-        </div>
+        <div className="boas-vindas">Bem vindo(a) {usuario?.nome}!</div>
       )}
     </>
   );

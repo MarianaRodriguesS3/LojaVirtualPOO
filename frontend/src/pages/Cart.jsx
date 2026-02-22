@@ -1,22 +1,19 @@
-import React, { useContext } from "react";
-import { CartContext } from "../context/CartContext";
+import React, { useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import "../pages/Cart.css";
+import { CartContext } from "../context/CartContext";
+import "./Cart.css";
 
 function Cart() {
-  const { cartItems, removeFromCart, clearCart, updateQuantity } =
+  const { cartItems, removeFromCart, clearCart, updateQuantity, userToken } =
     useContext(CartContext);
-
   const navigate = useNavigate();
 
-  const handleBuySingle = (item) => {
-    navigate("/checkout", { state: { product: item } });
-  };
+  // Redireciona guest sempre para a Home
+  useEffect(() => {
+    if (userToken === "guest") navigate("/", { replace: true });
+  }, [userToken, navigate]);
 
-  const total = cartItems.reduce(
-    (acc, item) => acc + item.price * item.quantity,
-    0
-  );
+  const total = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
 
   if (cartItems.length === 0) {
     return (
@@ -26,19 +23,17 @@ function Cart() {
     );
   }
 
+  const handleBuySingle = (item) => {
+    navigate("/checkout", { state: { product: item } });
+  };
+
   return (
     <div className="cart-container">
       <h1>Carrinho</h1>
 
       {cartItems.map((item) => (
-        <div
-          className="cart-item"
-          key={`${item.id}-${item.size}`}
-        >
-          <img
-            src={`http://localhost:5000/images/${item.image}`}
-            alt={item.name}
-          />
+        <div className="cart-item" key={`${item.id}-${item.size}-${item.name}`}>
+          <img src={`http://localhost:5000/images/${item.image}`} alt={item.name} />
 
           <div className="cart-info">
             <h3>{item.name}</h3>
@@ -47,32 +42,43 @@ function Cart() {
           </div>
 
           <div className="quantity-control">
-            <button onClick={() => updateQuantity(item.id, item.size, item.quantity - 1)}>−</button>
+            <button
+              onClick={() =>
+                updateQuantity(item.id, item.size, item.name, item.quantity - 1)
+              }
+            >
+              −
+            </button>
             <span>{item.quantity}</span>
-            <button onClick={() => updateQuantity(item.id, item.size, item.quantity + 1)}>+</button>
+            <button
+              onClick={() =>
+                updateQuantity(item.id, item.size, item.name, item.quantity + 1)
+              }
+            >
+              +
+            </button>
           </div>
 
           <div className="cart-actions">
             <button className="btn-buy-single" onClick={() => handleBuySingle(item)}>
               Comprar
             </button>
-            <button className="btn-remove" onClick={() => removeFromCart(item.id, item.size)}>
+            <button
+              className="btn-remove"
+              onClick={() => removeFromCart(item.id, item.size, item.name)}
+            >
               Remover
             </button>
           </div>
         </div>
       ))}
 
-      {/* SEÇÃO FINAL ALINHADA À DIREITA */}
       <div className="cart-total-section">
         <div className="total-content">
           <h2>Total: R$ {total.toFixed(2)}</h2>
           <div className="total-actions">
             <button className="btn-clear" onClick={clearCart}>
               Limpar Carrinho
-            </button>
-            <button className="btn-finalize" onClick={() => alert("Compra realizada!")}>
-              Finalizar Compra
             </button>
           </div>
         </div>
