@@ -8,9 +8,10 @@ import Cart from "./pages/Cart";
 import Checkout from "./pages/Checkout";
 import Login from "./pages/Login";
 import Cadastro from "./pages/Cadastro";
-import ForgotPassword from "./pages/ForgotPassword"; // 🔹 página esqueci minha senha
+import ForgotPassword from "./pages/ForgotPassword";
+import EditarCadastro from "./pages/EditarCadastro"; // 🔹 nova página de edição de cadastro
 import CartMessage from "./components/CartMessage";
-import ProtectedRoute from "./routes/ProtectedRoute"; // 🔹 proteção de rotas
+import ProtectedRoute from "./routes/ProtectedRoute";
 
 function App() {
   return (
@@ -34,6 +35,9 @@ function App() {
 
           {/* Página Esqueci minha senha - pública */}
           <Route path="/forgot-password" element={<ForgotPassword />} />
+
+          {/* Página Editar Cadastro - pública */}
+          <Route path="/editar-cadastro" element={<EditarCadastro />} />
 
           {/* Carrinho - protegida */}
           <Route

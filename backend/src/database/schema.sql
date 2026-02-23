@@ -37,5 +37,7 @@ CREATE TABLE users (
   nome VARCHAR(255) NOT NULL,
   email VARCHAR(255) NOT NULL UNIQUE,
   password VARCHAR(255) NOT NULL,
+  reset_token VARCHAR(255) NULL,
+  reset_token_expire DATETIME NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

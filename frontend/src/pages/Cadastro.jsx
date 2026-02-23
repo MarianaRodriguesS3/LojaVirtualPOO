@@ -14,7 +14,7 @@ function Cadastro() {
   const handleRegister = async (e) => {
     e.preventDefault();
     try {
-      await api.post("/auth/register", { nome, email, password, confirmPassword });
+      await api.post("/usuario/register", { nome, email, password, confirmPassword });
       navigate("/login");
     } catch (err) {
       setError(err.response?.data?.message || "Erro ao cadastrar");

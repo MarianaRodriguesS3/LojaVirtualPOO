@@ -1,13 +1,15 @@
-/* Layout Principal do Checkout */
+/* LAYOUT PRINCIPAL */
+
 .checkout-layout-grid {
   display: flex;
   align-items: center;
-  justify-content: space-between; /* Distribui as 3 posições */
+  justify-content: space-between;
   gap: 30px;
   padding: 30px;
 }
 
-/* Coluna 1: Imagem */
+/* COLUNA 1 - IMAGEM */
+
 .checkout-col-image img {
   width: 120px;
   height: 120px;
@@ -15,12 +17,13 @@
   border-radius: 10px;
 }
 
-/* Coluna 2: Seletores (Tamanho acima de Quantidade) */
+/* COLUNA 2 - SELETORES */
+
 .checkout-col-selectors {
   display: flex;
   flex-direction: column;
-  align-items: center; /* Centraliza os botões horizontalmente */
-  gap: 25px; /* Espaço entre o seletor de tamanho e o de quantidade */
+  align-items: center;
+  gap: 25px;
   flex: 1;
 }
 
@@ -48,14 +51,15 @@
 }
 
 .checkout-col-selectors .quantity-control {
-  justify-content: center; /* Garante que o + e - fiquem centralizados */
+  justify-content: center;
 }
 
-/* Coluna 3: Nome e Preço (Nome acima do Preço) */
+/* COLUNA 3 - INFORMAÇÕES */
+
 .checkout-col-info {
   display: flex;
   flex-direction: column;
-  align-items: center; /* Centraliza texto e preço */
+  align-items: center;
   gap: 15px;
   flex: 1;
   text-align: center;
@@ -74,7 +78,22 @@
   color: #333;
 }
 
-/* Ajuste do botão de finalizar */
+/* BOTÃO FINALIZAR */
+
+.btn-finalize {
+  background: #388e3c;
+  color: white;
+  border: none;
+  padding: 10px 25px;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.btn-finalize:hover {
+  background: #2e7d32;
+}
+
 .btn-finalize:disabled {
   background-color: #aeb9cc;
   cursor: not-allowed;

@@ -2,40 +2,48 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../services/api";
-import "./Login.css"; // mantém o mesmo estilo do login
+import "./Login.css";
 
 function ForgotPassword() {
   const [email, setEmail] = useState("");
-  const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  const handleSubmit = async (e) => {
+  const handleContinue = async (e) => {
     e.preventDefault();
-    setMessage("");
     setError("");
 
+    if (!email) {
+      setError("Informe o email cadastrado");
+      return;
+    }
+
     try {
-      await api.post("/forgot-password", { email }); // rota backend que você vai criar depois
-      setMessage("Email de redefinição enviado! Verifique sua caixa de entrada.");
+      // Chama a API para verificar se o email existe
+      const response = await api.post("/usuario/verificar-email", { email });
+
+      const user = response.data.user;
+
+      // Se encontrou, redireciona para EditarCadastro enviando dados do usuário
+      navigate("/editar-cadastro", { state: { user } });
     } catch (err) {
-      setError(err.response?.data?.message || "Erro ao enviar email");
+      // Se a API retornar erro 400 ou 404 → email não cadastrado
+      setError(err.response?.data?.message || "Email não cadastrado");
     }
   };
 
   return (
     <div className="login-container">
       <h1>Esqueci minha senha</h1>
-      <form className="login-form" onSubmit={handleSubmit}>
+      <form className="login-form" onSubmit={handleContinue}>
         <input
           type="email"
           placeholder="Email cadastrado"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
         />
-        <button type="submit">Enviar email</button>
+        <button type="submit">Continuar</button>
       </form>
-      {message && <p className="login-success">{message}</p>}
       {error && <p className="login-error">{error}</p>}
       <button className="back-button" onClick={() => navigate("/login")}>
         Voltar
