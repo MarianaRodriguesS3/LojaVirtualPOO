@@ -1,4 +1,4 @@
-const db = require('../database/connection'); // sua conexão MySQL
+const db = require('../database/connection');
 const bcrypt = require('bcryptjs');
 const Usuario = require('../models/Usuario');
 
