@@ -7,12 +7,11 @@ function CartMessage() {
   const { notification, setNotification } = useContext(CartContext);
   const navigate = useNavigate();
 
-  // Hooks sempre chamados, mesmo que notification seja null
   useEffect(() => {
-    if (!notification) return; // Se não houver notificação, não faz nada
+    if (!notification) return;
 
     const timer = setTimeout(() => setNotification(null), 3000);
-    return () => clearTimeout(timer); // limpa o timer ao desmontar
+    return () => clearTimeout(timer);
   }, [notification, setNotification]);
 
   const handleGoToCart = () => {
@@ -20,7 +19,6 @@ function CartMessage() {
     navigate("/carrinho");
   };
 
-  // JSX condicional: só renderiza se houver notificação
   if (!notification) return null;
 
   const { product } = notification;

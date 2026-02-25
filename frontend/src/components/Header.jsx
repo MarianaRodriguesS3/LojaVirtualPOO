@@ -49,7 +49,7 @@ function Header() {
     localStorage.removeItem("usuario");
     setMostrarMenu(false);
     logout();
-    navigate("/", { replace: true }); // FORÇA ir para a Home
+    navigate("/", { replace: true });
   };
 
   return (

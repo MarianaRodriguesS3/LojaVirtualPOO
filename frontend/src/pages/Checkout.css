@@ -1,5 +1,3 @@
-/* LAYOUT PRINCIPAL */
-
 .checkout-layout-grid {
   display: flex;
   align-items: center;
@@ -8,16 +6,12 @@
   padding: 30px;
 }
 
-/* COLUNA 1 - IMAGEM */
-
 .checkout-col-image img {
   width: 120px;
   height: 120px;
   object-fit: cover;
   border-radius: 10px;
 }
-
-/* COLUNA 2 - SELETORES */
 
 .checkout-col-selectors {
   display: flex;
@@ -54,8 +48,6 @@
   justify-content: center;
 }
 
-/* COLUNA 3 - INFORMAÇÕES */
-
 .checkout-col-info {
   display: flex;
   flex-direction: column;
@@ -77,8 +69,6 @@
   font-weight: bold;
   color: #333;
 }
-
-/* BOTÃO FINALIZAR */
 
 .btn-finalize {
   background: #388e3c;

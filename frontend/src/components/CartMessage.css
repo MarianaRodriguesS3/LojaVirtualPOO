@@ -42,7 +42,7 @@
 
 .cart-info {
   flex: 1;
-  text-align: center; /* 🔥 centraliza texto */
+  text-align: center;
 }
 
 .cart-info h4 {

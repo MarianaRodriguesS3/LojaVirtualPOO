@@ -1,5 +1,3 @@
-/* LAYOUT GERAL DO CARRINHO */
-
 .cart-container {
   max-width: 950px;
   margin: 60px auto;
@@ -13,8 +11,6 @@
   font-size: 32px;
   color: #1a1a1a;
 }
-
-/* CARD DO ITEM */
 
 .cart-item {
   display: flex;
@@ -34,8 +30,6 @@
   object-fit: cover;
   border-radius: 8px;
 }
-
-/* INFORMAÇÕES DO ITEM */
 
 .cart-info {
   flex: 2;
@@ -58,8 +52,6 @@
   font-weight: bold;
   color: #333;
 }
-
-/* CONTROLE DE QUANTIDADE */
 
 .quantity-control {
   flex: 1;
@@ -84,8 +76,6 @@
   text-align: center;
 }
 
-/* AÇÕES DO ITEM */
-
 .cart-actions {
   display: flex;
   flex-direction: column;
@@ -109,8 +99,6 @@
   border-radius: 4px;
   cursor: pointer;
 }
-
-/* TOTAL DO CARRINHO */
 
 .cart-total-section {
   margin-top: 30px;
@@ -150,15 +138,11 @@
   background: #616161;
 }
 
-/* ESTADO VAZIO */
-
 .empty-cart {
   text-align: center;
   padding: 50px;
   color: #555;
 }
-
-/* CHECKBOX */
 
 .cart-checkbox {
   width: 20px;
@@ -176,6 +160,6 @@
 .cart-item .cart-checkbox:not(:checked) ~ .cart-info,
 .cart-item .cart-checkbox:not(:checked) ~ .quantity-control,
 .cart-item .cart-checkbox:not(:checked) ~ .cart-actions {
-  opacity: 0.5;
+  opacity: 0.7;
   transition: opacity 0.3s ease;
 }

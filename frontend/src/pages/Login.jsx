@@ -30,10 +30,10 @@ function Login() {
       localStorage.setItem("token", res.data.token);
       localStorage.setItem("usuario", JSON.stringify(res.data.user));
 
-      // 5. Marcação de login recente (mantido do seu original)
+      // 5. Marcação de login recente
       sessionStorage.setItem("loginRecente", "true");
 
-      // 6. Evento para atualizar Header (mantido do seu original)
+      // 6. Evento para atualizar Header
       window.dispatchEvent(new Event("userLoggedIn"));
 
       // 7. Redireciona para home

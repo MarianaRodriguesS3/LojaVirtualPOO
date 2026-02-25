@@ -1,4 +1,3 @@
-/* Layout geral da página de login */
 .login-container {
   max-width: 400px;
   margin: 80px auto;
@@ -10,7 +9,6 @@
   flex-direction: column;
 }
 
-/* Título */
 .login-container h1 {
   font-size: 28px;
   color: #1a1a1a;
@@ -18,14 +16,12 @@
   text-align: center;
 }
 
-/* Formulário */
 .login-form {
   display: flex;
   flex-direction: column;
   gap: 20px;
 }
 
-/* Campos de input */
 .login-form input {
   padding: 12px 15px;
   font-size: 1rem;
@@ -40,7 +36,6 @@
   box-shadow: 0 0 5px rgba(10,1,78,0.2);
 }
 
-/* Botão Entrar */
 .login-form button {
   padding: 12px;
   background-color: #022307;
@@ -56,11 +51,10 @@
   background-color: #011b04;
 }
 
-/* Links auxiliares lado a lado */
 .login-links {
   display: flex;
-  gap: 15px;           /* espaço entre os links */
-  justify-content: flex-start; /* alinhados à esquerda */
+  gap: 15px;
+  justify-content: flex-start;
   margin-top: 15px;
   font-size: 0.9rem;
 }
@@ -75,17 +69,15 @@
   text-decoration: underline;
 }
 
-/* Mensagem de erro */
 .login-error {
   color: #e53935;
   font-size: 0.9rem;
   margin-top: -10px;
 }
 
-/* Botão "Voltar" alinhado à direita */
 .back-button {
   margin-top: 30px;
-  align-self: flex-end; /* empurra para a direita */
+  align-self: flex-end;
   background-color: #757575;
   color: white;
   border: none;

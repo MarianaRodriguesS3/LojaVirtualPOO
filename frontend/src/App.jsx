@@ -1,4 +1,3 @@
-// src/App.jsx
 import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
@@ -9,51 +8,34 @@ import Checkout from "./pages/Checkout";
 import Login from "./pages/Login";
 import Cadastro from "./pages/Cadastro";
 import ForgotPassword from "./pages/ForgotPassword";
-import EditarCadastro from "./pages/EditarCadastro"; // 🔹 nova página de edição de cadastro
+import EditarCadastro from "./pages/EditarCadastro";
 import CartMessage from "./components/CartMessage";
 import ProtectedRoute from "./routes/ProtectedRoute";
 
 function App() {
   return (
     <BrowserRouter>
-      {/* Cabeçalho */}
-      <Header />
-
-      {/* Notificação de adição ao carrinho */}
-      <CartMessage />
+      <Header /> {/* Cabeçalho */}
+      <CartMessage /> {/* Notificação de adição ao carrinho */}
 
       <main>
         <Routes>
-          {/* Página inicial - pública */}
+          {/* Rotas publicas */}
           <Route path="/" element={<Home />} />
-
-          {/* Página de Login - pública */}
           <Route path="/login" element={<Login />} />
-
-          {/* Página de Cadastro - pública */}
           <Route path="/register" element={<Cadastro />} />
-
-          {/* Página Esqueci minha senha - pública */}
           <Route path="/forgot-password" element={<ForgotPassword />} />
-
-          {/* Página Editar Cadastro - pública */}
           <Route path="/editar-cadastro" element={<EditarCadastro />} />
 
           {/* Carrinho - protegida */}
-          <Route
-            path="/carrinho"
-            element={
-              <ProtectedRoute>
+          <Route path="/carrinho" element={<ProtectedRoute>
                 <Cart />
               </ProtectedRoute>
             }
           />
 
           {/* Checkout - protegido */}
-          <Route
-            path="/checkout"
-            element={
-              <ProtectedRoute>
+          <Route path="/checkout"element={<ProtectedRoute>
                 <Checkout />
               </ProtectedRoute>
             }
