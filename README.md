@@ -44,3 +44,31 @@ O backend segue princípios de **Programação Orientada a Objetos**, com separa
 - **Routes** → Definição das rotas da API
 
 ---
+
+## Novas Funcionalidades
+
+- Ampliar as opções de tamanho dos produtos para maior do que a quantidade exibida no view do card. Sugestão: efeito carrocel
+- Favicon personalizado
+- Criar logo e nome da loja
+- Criar um footer
+
+### Checkout completo
+
+Rascunho:
+- dados sensiveis
+    - endereços
+    - informações pessoais
+- forma de resolver: 
+    - no cadastro do usuário, voce irá preencher automaticamente a informação endereco e a informação dados pessoais
+        - endereco: "endereço famoso"
+        - dados-pessoas: 
+            - nome de um famoso:
+            - cpf inventado: sugestão: gerador de cpf
+- comportamento de compra para produto em checkout unitário
+- de forma simplificado, criar um checkout
+- conclusao de completo: carrinho, informaçoes do usuario e opção de compra
+
+### Investigar
+
+- armazenamento de imagem
+- armazenamento de informação de produtos

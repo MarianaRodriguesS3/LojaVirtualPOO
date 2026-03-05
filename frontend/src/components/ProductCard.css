@@ -52,9 +52,18 @@
   display: flex;
   gap: 8px;
   margin: 10px 0;
+  overflow-x: auto;
+  max-width: 240px; /* mostra apenas 5 botões */
+  scroll-behavior: smooth;
+  scrollbar-width: none; /* esconder scrollbar */
+}
+
+.size-selector::-webkit-scrollbar {
+  display: none;
 }
 
 .size-btn {
+  flex: 0 0 auto; /* botões não encolhem */
   width: 40px;
   height: 40px;
   border-radius: 8px;
