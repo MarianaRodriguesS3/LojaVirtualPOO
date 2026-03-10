@@ -16,7 +16,6 @@ function ProductCard({ product }) {
   const containerRef = useRef(null);
   const cardRef = useRef(null);
 
-  // movimentação do carrossel
   const moveLeft = () => {
     setCenterIndex((prev) => Math.max(prev - 1, 2));
   };
@@ -101,6 +100,10 @@ function ProductCard({ product }) {
 
       <div className="product-info">
         <h3>{product.name}</h3>
+
+        {/* DESCRIÇÃO DO PRODUTO */}
+        <p className="description">{product.description}</p>
+
         <p className="price">R$ {Number(product.price).toFixed(2)}</p>
 
         <div

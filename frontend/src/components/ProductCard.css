@@ -17,7 +17,7 @@
 
 .product-card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+  box-shadow: 0 0 15px #7cb58a;
 }
 
 /* Imagem do produto */
@@ -35,12 +35,13 @@
 .product-info h3 {
   margin: 0 0 10px;
   font-size: 1.1rem;
+  color: #022307;
 }
 
 .product-info p {
   margin: 0 0 5px;
   font-size: 0.9rem;
-  color: #555;
+  color: #022307;
 }
 
 .product-info .price {
@@ -53,33 +54,10 @@
   justify-content: center;
   align-items: center;
   gap: 8px;
-  margin: 12px auto;
-  width: 232px;
+  margin-top: 12px;
   overflow: hidden;
   position: relative;
   transition: all 0.3s ease;
-}
-
-/* Gradient nas bordas indicando mais tamanhos */
-.size-carousel::before,
-.size-carousel::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  width: 20px;
-  height: 100%;
-  z-index: 2;
-  pointer-events: none;
-}
-
-.size-carousel::before {
-  left: 0;
-  background: linear-gradient(to right, #fff 0%, transparent 100%);
-}
-
-.size-carousel::after {
-  right: 0;
-  background: linear-gradient(to left, #fff 0%, transparent 100%);
 }
 
 /* Botões de tamanho */
@@ -87,7 +65,8 @@
   width: 40px;
   height: 40px;
   border-radius: 8px;
-  border: 1px solid #090243 !important;
+  border: 1px solid #022307 !important;
+  color: #022307;
   background-color: white;
   cursor: pointer;
   font-weight: bold;
@@ -96,16 +75,16 @@
 }
 
 .size-btn:hover {
-  border-color: #000;
+  border-color: #022307;
   color: white;
-  background-color: #090243;
+  background-color: #022307;
   transform: scale(1.08);
 }
 
 .size-btn.selected {
-  background-color: #090243;
+  background-color: #022307!important;
   color: white;
-  border-color: #000;
+  border-color: #022307;
 }
 
 /* Erro tamanho */
@@ -157,10 +136,16 @@
 
 /* Botão Comprar */
 .btn-buy {
-  background-color: #28a745;
-  color: #fff;
+  background-color: #fff;
+  color: #022307;
+  border: 1px solid #022307 !important;
+  transition: all 0.3s ease;
 }
 
 .btn-buy:hover {
-  background-color: #218838;
+  color: #041508;
+  border: 1px solid #022307;
+  box-shadow: 0 0 8px rgba(2, 35, 7, 0.3);
+  background-color: transparent;
+  backdrop-filter: blur(10px);
 }

@@ -72,3 +72,7 @@ Rascunho:
 
 - armazenamento de imagem
 - armazenamento de informação de produtos
+
+### nova pagina
+
+- meus pedidos (pagina que acompanha a compra após ser finalizada)
