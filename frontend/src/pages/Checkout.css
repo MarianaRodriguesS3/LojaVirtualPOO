@@ -23,8 +23,10 @@
 
 .size-selector {
   display: flex;
+  flex-wrap: wrap;
   gap: 8px;
   justify-content: center;
+  max-width: 215px;
 }
 
 .size-btn {

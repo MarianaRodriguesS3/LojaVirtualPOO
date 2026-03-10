@@ -33,7 +33,7 @@ function Checkout() {
         {/* POSIÇÃO 2: Tamanho e Quantidade (Centralizados um abaixo do outro) */}
         <div className="checkout-col-selectors">
           <div className="size-selector">
-            {[36, 37, 38, 39, 40].map((size) => (
+            {[34, 45, 36, 37, 38, 39, 40, 41, 42].map((size) => (
               <button
                 key={size}
                 className={`size-btn ${selectedSize === size ? "selected" : ""}`}

@@ -5,91 +5,89 @@ import "./ProductCard.css";
 
 function ProductCard({ product }) {
   const { addToCart, userToken } = useContext(CartContext);
+  const navigate = useNavigate();
+
+  const sizes = [34, 35, 36, 37, 38, 39, 40, 41, 42];
+
+  const [centerIndex, setCenterIndex] = useState(4);
   const [selectedSize, setSelectedSize] = useState(null);
   const [sizeError, setSizeError] = useState("");
 
+  const containerRef = useRef(null);
   const cardRef = useRef(null);
-  const sizeContainerRef = useRef(null);
 
-  const navigate = useNavigate();
-
-  // tamanhos agora de 34 a 42
-  const sizes = [34, 35, 36, 37, 38, 39, 40, 41, 42];
-
-  const handleAddToCart = () => {
-    if (userToken === "guest") {
-      navigate("/login");
-      return;
-    }
-
-    if (!selectedSize) {
-      setSizeError("Selecione um tamanho!");
-      return;
-    }
-
-    addToCart({ ...product, size: selectedSize });
-    setSelectedSize(null);
-    setSizeError("");
+  // movimentação do carrossel
+  const moveLeft = () => {
+    setCenterIndex((prev) => Math.max(prev - 1, 2));
   };
 
-  const handleBuyNow = () => {
-    if (userToken === "guest") {
-      navigate("/login");
-      return;
-    }
-
-    if (!selectedSize) {
-      setSizeError("Selecione um tamanho!");
-      return;
-    }
-
-    navigate("/checkout", {
-      state: { product: { ...product, size: selectedSize, quantity: 1 } },
-    });
+  const moveRight = () => {
+    setCenterIndex((prev) => Math.min(prev + 1, sizes.length - 3));
   };
 
-  useEffect(() => {
-    if (!sizeError) return;
-    const timer = setTimeout(() => setSizeError(""), 5000);
-    return () => clearTimeout(timer);
-  }, [sizeError]);
+  const handleMouseMove = (e) => {
+    const rect = containerRef.current.getBoundingClientRect();
+    const mouseX = e.clientX - rect.left;
+    const center = rect.width / 2;
+
+    if (mouseX > center + 40) {
+      moveRight();
+    }
+
+    if (mouseX < center - 40) {
+      moveLeft();
+    }
+  };
+
+  const visibleSizes = sizes.slice(centerIndex - 2, centerIndex + 3);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (cardRef.current && !cardRef.current.contains(event.target)) {
         setSelectedSize(null);
+        setSizeError("");
       }
     };
 
-    document.addEventListener("click", handleClickOutside);
-    return () => document.removeEventListener("click", handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
   }, []);
 
-  // scroll com roda do mouse
-  const handleWheel = (e) => {
-    if (sizeContainerRef.current) {
-      e.preventDefault();
-      sizeContainerRef.current.scrollLeft += e.deltaY;
+  const handleAddToCart = () => {
+    if (userToken === "guest") return navigate("/login");
+
+    if (!selectedSize) {
+      return setSizeError("Selecione um tamanho!");
     }
+
+    addToCart({ ...product, size: selectedSize });
+
+    setSelectedSize(null);
+    setSizeError("");
   };
 
-  // auto scroll quando mouse chega na borda
-  const handleMouseMove = (e) => {
-    const container = sizeContainerRef.current;
-    if (!container) return;
+  const handleBuyNow = () => {
+    if (userToken === "guest") return navigate("/login");
 
-    const rect = container.getBoundingClientRect();
-    const mouseX = e.clientX - rect.left;
-
-    const edge = 40;
-
-    if (mouseX < edge) {
-      container.scrollLeft -= 10;
+    if (!selectedSize) {
+      return setSizeError("Selecione um tamanho!");
     }
 
-    if (mouseX > rect.width - edge) {
-      container.scrollLeft += 10;
-    }
+    navigate("/checkout", {
+      state: {
+        product: {
+          ...product,
+          size: selectedSize,
+          quantity: 1,
+        },
+      },
+    });
+
+    setSelectedSize(null);
+    setSizeError("");
   };
 
   return (
@@ -103,23 +101,23 @@ function ProductCard({ product }) {
 
       <div className="product-info">
         <h3>{product.name}</h3>
-        <p>{product.description}</p>
-
         <p className="price">R$ {Number(product.price).toFixed(2)}</p>
 
         <div
-          className="size-selector"
-          ref={sizeContainerRef}
-          onWheel={handleWheel}
+          className="size-carousel"
+          ref={containerRef}
           onMouseMove={handleMouseMove}
         >
-          {sizes.map((size) => (
+          {visibleSizes.map((size) => (
             <button
               key={size}
               className={`size-btn ${
                 selectedSize === size ? "selected" : ""
               }`}
-              onClick={() => setSelectedSize(size)}
+              onClick={() => {
+                setSelectedSize(size);
+                setSizeError("");
+              }}
             >
               {size}
             </button>

@@ -48,36 +48,58 @@
   color: #1a8917;
 }
 
-.size-selector {
+.size-carousel {
   display: flex;
+  justify-content: center;
+  align-items: center;
   gap: 8px;
-  margin: 10px 0;
-  overflow-x: auto;
-  max-width: 240px; /* mostra apenas 5 botões */
-  scroll-behavior: smooth;
-  scrollbar-width: none; /* esconder scrollbar */
+  margin: 12px auto;
+  width: 232px;
+  overflow: hidden;
+  position: relative;
+  transition: all 0.3s ease;
 }
 
-.size-selector::-webkit-scrollbar {
-  display: none;
+/* Gradient nas bordas indicando mais tamanhos */
+.size-carousel::before,
+.size-carousel::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  width: 20px;
+  height: 100%;
+  z-index: 2;
+  pointer-events: none;
 }
 
+.size-carousel::before {
+  left: 0;
+  background: linear-gradient(to right, #fff 0%, transparent 100%);
+}
+
+.size-carousel::after {
+  right: 0;
+  background: linear-gradient(to left, #fff 0%, transparent 100%);
+}
+
+/* Botões de tamanho */
 .size-btn {
-  flex: 0 0 auto; /* botões não encolhem */
   width: 40px;
   height: 40px;
   border-radius: 8px;
-  border: 1px solid #ccc;
+  border: 1px solid #090243 !important;
   background-color: white;
   cursor: pointer;
   font-weight: bold;
-  transition: all 0.2s ease;
+  transition: all 0.25s ease;
+  flex-shrink: 0;
 }
 
 .size-btn:hover {
   border-color: #000;
   color: white;
   background-color: #090243;
+  transform: scale(1.08);
 }
 
 .size-btn.selected {
@@ -86,6 +108,7 @@
   border-color: #000;
 }
 
+/* Erro tamanho */
 .product-info .size-error {
   color: #d32f2f;
   font-size: 14px;
@@ -115,7 +138,11 @@
   border-radius: 6px;
   border: none;
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: background-color 0.2s, transform 0.1s;
+}
+
+.product-actions button:active {
+  transform: scale(0.96);
 }
 
 /* Botão Carrinho */
