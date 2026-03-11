@@ -87,6 +87,6 @@
 }
 
 .btn-finalize:disabled {
-  background-color: #aeb9cc;
+  background-color: #e1ebe5;
   cursor: not-allowed;
 }
