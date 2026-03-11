@@ -145,7 +145,7 @@
 .btn-buy:hover {
   color: #041508;
   border: 1px solid #022307;
-  box-shadow: 0 0 8px rgba(2, 35, 7, 0.3);
+  box-shadow: 0 6px 20px rgba(2, 35, 7, 0.3);
   background-color: transparent;
   backdrop-filter: blur(10px);
 }

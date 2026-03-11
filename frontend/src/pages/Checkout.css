@@ -33,7 +33,7 @@
   width: 35px;
   height: 35px;
   border: 1px solid #bbc4d6;
-  background: white;
+  background: white;  /* #c1d6c8 para a pagina checkout, branco para a home  */
   border-radius: 5px;
   cursor: pointer;
   font-size: 0.9rem;
