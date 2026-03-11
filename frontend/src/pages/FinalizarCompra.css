@@ -1,0 +1,131 @@
+.container { 
+  max-width: 600px; 
+  margin: 40px auto; 
+  font-family: Arial, Helvetica, sans-serif; 
+  padding: 25px; 
+  border: 1px solid #ddd; 
+  border-radius: 8px; 
+}
+
+h2 { text-align: center; margin-bottom: 20px; }
+
+.form { display: flex; flex-direction: column; gap: 10px; margin-bottom: 25px; }
+
+.form input { padding: 8px; border-radius: 5px; border: 1px solid #ccc; }
+
+.tabs { display: flex; gap: 10px; margin-bottom: 20px; }
+
+.tabs button { flex: 1; padding: 10px; cursor: pointer; border: 1px solid #bbb; border-radius: 5px; background: #f5f5f5; transition: 0.2s; }
+
+.tabs button:hover { background: #e0e0e0; }
+
+.tabs button.selecionado { background: #022307; color: white; border-color: #011121; }
+
+.painel { border: 1px solid #ddd; padding: 20px; border-radius: 6px; margin-bottom: 20px; }
+
+.qr { display: block; margin: 15px auto; }
+
+.pix-chave { display: flex; gap: 10px; margin-top: 10px; }
+
+.pix-chave input { flex: 1; }
+
+.pix-chave button { padding: 8px 12px; cursor: pointer; }
+
+.boleto { width: 100%; max-width: 500px; display: block; margin: auto; }
+
+/* Cartão de crédito */
+.cartao-inputs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.grupo-quadradinhos {
+  display: flex;
+  gap: 3px;
+}
+
+/* Quadradinhos */
+.num-quadradinho {
+  width: 25px;
+  height: 25px;
+  border-radius: 6px;
+  border: 1px solid #bbb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fff;
+  font-weight: bold;
+}
+
+/* Linha com validade e CVV */
+.linha-cvv-validade { display: flex; gap: 15px; margin-top: 10px; flex-wrap: wrap; }
+
+.campo-validade, .campo-cvv { display: flex; flex-direction: row; align-items: center; gap: 5px; }
+
+.campo-validade label, .campo-cvv label { font-weight: bold; }
+
+.info { display: inline-block; width: 18px; height: 18px; text-align: center; line-height: 18px; border-radius: 50%; background: #bbb; color: white; font-weight: bold; cursor: pointer; margin-left: 5px; }
+
+/* Botão finalizar */
+.finalizar { width: 100%; padding: 15px; font-size: 16px; background: #2ecc71; color: white; border: none; border-radius: 6px; cursor: pointer; transition: 0.2s; margin-top: 10px; }
+
+.finalizar:hover { background: #27ae60; }
+
+/* Mensagens de erro e sucesso */
+.mensagem { margin-top: 10px; font-weight: bold; text-align: center; }
+
+.mensagem.vermelho { color: #e74c3c; }
+
+.mensagem.verde { color: #2ecc71; }
+
+/* RESPONSIVO PARA QUADRADINHOS */
+
+/* Telas grandes - todos inline */
+@media (min-width: 900px) {
+  .cartao-inputs {
+    flex-wrap: nowrap;
+  }
+}
+
+/* Telas médias - 2 grupos por linha */
+@media (max-width: 899px) and (min-width: 600px) {
+  .cartao-inputs {
+    flex-wrap: wrap;
+    gap: 10px; /* mantém o gap entre grupos */
+  }
+
+  .grupo-quadradinhos {
+    flex: 1 1 48%; /* dois grupos por linha */
+    justify-content: flex-start; /* Mantém quadradinhos próximos, sem espaço extra */
+  }
+}
+
+/* Telas pequenas - 1 grupo por linha */
+@media (max-width: 599px) {
+  .cartao-inputs {
+    flex-direction: column;
+  }
+
+  .grupo-quadradinhos {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .num-quadradinho { width: 22px; height: 22px; }
+}
+
+/* Telas pequenas - 1 grupo por linha */
+@media (max-width: 599px) {
+  .cartao-inputs {
+    flex-direction: column;
+  }
+
+  .grupo-quadradinhos {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .num-quadradinho { width: 22px; height: 22px; }
+}

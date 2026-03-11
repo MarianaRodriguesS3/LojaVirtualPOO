@@ -33,7 +33,7 @@
   width: 35px;
   height: 35px;
   border: 1px solid #bbc4d6;
-  background: white;  /* #c1d6c8 para a pagina checkout, branco para a home  */
+  background: white;
   border-radius: 5px;
   cursor: pointer;
   font-size: 0.9rem;
@@ -73,7 +73,7 @@
 }
 
 .btn-finalize {
-  background: #388e3c;
+  background: #022307;
   color: white;
   border: none;
   padding: 10px 25px;
@@ -83,7 +83,7 @@
 }
 
 .btn-finalize:hover {
-  background: #2e7d32;
+  background: #041508;
 }
 
 .btn-finalize:disabled {

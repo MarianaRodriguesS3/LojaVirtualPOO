@@ -1,16 +1,21 @@
 import React, { useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import "../pages/Checkout.css";
 
 function Checkout() {
   const location = useLocation();
+  const navigate = useNavigate(); // <-- adicionado
   const { product } = location.state || {};
 
   const [selectedSize, setSelectedSize] = useState(product?.size || null);
   const [quantity, setQuantity] = useState(product?.quantity || 1);
 
   if (!product) {
-    return <div className="cart-container"><h2 className="empty-cart">Nenhum produto selecionado.</h2></div>;
+    return (
+      <div className="cart-container">
+        <h2 className="empty-cart">Nenhum produto selecionado.</h2>
+      </div>
+    );
   }
 
   const handleQuantityChange = (delta) => {
@@ -33,7 +38,7 @@ function Checkout() {
         {/* POSIÇÃO 2: Tamanho e Quantidade (Centralizados um abaixo do outro) */}
         <div className="checkout-col-selectors">
           <div className="size-selector">
-            {[34, 45, 36, 37, 38, 39, 40, 41, 42].map((size) => (
+            {[34, 35, 36, 37, 38, 39, 40, 41, 42].map((size) => (
               <button
                 key={size}
                 className={`size-btn ${selectedSize === size ? "selected" : ""}`}
@@ -62,10 +67,20 @@ function Checkout() {
         <div className="total-content">
           <h2>Total: R$ {(product.price * quantity).toFixed(2)}</h2>
           <div className="total-actions">
-            <button 
-              className="btn-finalize" 
-              onClick={() => alert("Compra finalizada!")}
+            <button
+              className="btn-finalize"
               disabled={!selectedSize}
+              onClick={() =>
+                navigate("/finalizar-compra", {
+                  state: {
+                    product: {
+                      ...product,
+                      size: selectedSize,
+                      quantity: quantity,
+                    },
+                  },
+                })
+              }
             >
               {selectedSize ? "Finalizar Compra" : "Selecione o Tamanho"}
             </button>
