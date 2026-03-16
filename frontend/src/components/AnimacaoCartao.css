@@ -1,0 +1,102 @@
+.cartao-mini-anim{
+  position:absolute;
+  left:22px;
+  top:-8px;
+  perspective:800px;
+}
+
+.cartao-flip{
+  width:75px;
+  height:45px;
+  position:relative;
+  transform-style:preserve-3d;
+  animation:flipCard 0.7s forwards;
+}
+
+@keyframes flipCard{
+  from{
+    transform:rotateY(0deg);
+  }
+  to{
+    transform:rotateY(180deg);
+  }
+}
+
+.cartao-frente,
+.cartao-verso{
+  position:absolute;
+  width:100%;
+  height:100%;
+  border-radius:5px;
+  backface-visibility:hidden;
+}
+
+.cartao-frente{
+  background:linear-gradient(135deg,#5a5a5a,#3c3c3c);
+}
+
+.chip{
+  width:10px;
+  height:7px;
+  background:gold;
+  border-radius:2px;
+  margin:7px;
+}
+
+.cartao-verso{
+  background:linear-gradient(135deg,#5a5a5a,#3c3c3c);
+  transform:rotateY(180deg);
+  position:relative;
+}
+
+.tarja-preta{
+  position:absolute;
+  top:8px;
+  left:0;
+  width:100%;
+  height:10px;
+  background:black;
+}
+
+.area-cvv{
+  position:absolute;
+  right:6px;
+  top:8px;
+  background:white;
+  padding:1px 3px;
+  font-weight:bold;
+  font-size:8px;
+  border-radius:2px;
+}
+
+.cvv-numeros{
+  position:relative;
+  z-index:2;
+}
+
+.cvv-ellipse-svg{
+  position:absolute;
+  left:-8px;
+  top:-4px;
+  width:35px;
+  height:20px;
+}
+
+ellipse{
+  stroke:red;
+  stroke-width:4;
+  fill:transparent;
+  stroke-dasharray:200;
+  stroke-dashoffset:200;
+}
+
+.ellipse-anim{
+  animation:circleDraw 1s forwards;
+  animation-delay:0.7s;
+}
+
+@keyframes circleDraw{
+  to{
+    stroke-dashoffset:0;
+  }
+}

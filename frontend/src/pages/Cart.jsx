@@ -1,38 +1,31 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { CartContext } from "../context/CartContext";
+import BtnFinalizarCompra from "../components/BtnFinalizarCompra";
 import "./Cart.css";
 
 function Cart() {
   const { cartItems, removeFromCart, clearCart, updateQuantity, userToken } =
     useContext(CartContext);
   const navigate = useNavigate();
-  const [selectedItems, setSelectedItems] = useState({}); // controle das checkboxes
+  const [selectedItems, setSelectedItems] = useState({});
 
-  // Redireciona guest para a Home
   useEffect(() => {
     if (userToken === "guest") navigate("/", { replace: true });
   }, [userToken, navigate]);
 
-  // Inicializa selectedItems quando cartItems mudarem
   useEffect(() => {
     const initialSelection = {};
     cartItems.forEach((item) => {
-      // padrão: todos marcados
       initialSelection[`${item.id}-${item.size}-${item.name}`] = true;
     });
     setSelectedItems(initialSelection);
   }, [cartItems]);
 
-  // Atualiza seleção de um produto
   const handleCheckboxChange = (key) => {
-    setSelectedItems((prev) => ({
-      ...prev,
-      [key]: !prev[key],
-    }));
+    setSelectedItems((prev) => ({ ...prev, [key]: !prev[key] }));
   };
 
-  // Total considerando apenas produtos marcados
   const total = cartItems.reduce((acc, item) => {
     const key = `${item.id}-${item.size}-${item.name}`;
     return acc + (selectedItems[key] ? item.price * item.quantity : 0);
@@ -46,12 +39,10 @@ function Cart() {
     );
   }
 
-  // Compra unitária de um item → redireciona para Checkout
   const handleBuySingle = (item) => {
     navigate("/checkout", { state: { product: item } });
   };
 
-  // Finalizar compra → exibe alert, remove produtos marcados após confirmar
   const handleFinalizeCart = () => {
     const itemsToRemove = cartItems.filter((item) => {
       const key = `${item.id}-${item.size}-${item.name}`;
@@ -63,10 +54,7 @@ function Cart() {
       return;
     }
 
-    // Mostra alert de sucesso
     alert("Compra finalizada com sucesso!");
-
-    // Remove produtos marcados do carrinho APÓS clicar em OK
     itemsToRemove.forEach((item) => {
       removeFromCart(item.id, item.size || null, item.name);
     });
@@ -80,7 +68,6 @@ function Cart() {
         const key = `${item.id}-${item.size}-${item.name}`;
         return (
           <div className="cart-item" key={key}>
-            {/* Checkbox */}
             <input
               type="checkbox"
               checked={selectedItems[key] || false}
@@ -93,9 +80,7 @@ function Cart() {
             <div className="cart-info">
               <h3>{item.name}</h3>
               {item.size && <p className="cart-size">Tamanho: {item.size}</p>}
-              <p className="price">
-                R$ {(item.price * item.quantity).toFixed(2)}
-              </p>
+              <p className="price">R$ {(item.price * item.quantity).toFixed(2)}</p>
             </div>
 
             <div className="quantity-control">
@@ -135,12 +120,7 @@ function Cart() {
         <div className="total-content">
           <h2>Total: R$ {total.toFixed(2)}</h2>
           <div className="total-actions">
-            {/* Finaliza apenas os itens selecionados */}
-            <button className="btn-finalize" onClick={handleFinalizeCart}>
-              Finalizar Compra
-            </button>
-
-            {/* Limpa todo o carrinho */}
+            <BtnFinalizarCompra onClick={handleFinalizeCart} />
             <button className="btn-clear" onClick={clearCart}>
               Limpar Carrinho
             </button>

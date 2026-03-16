@@ -71,22 +71,3 @@
   font-weight: bold;
   color: #333;
 }
-
-.btn-finalize {
-  background: #022307;
-  color: white;
-  border: none;
-  padding: 10px 25px;
-  border-radius: 6px;
-  font-weight: bold;
-  cursor: pointer;
-}
-
-.btn-finalize:hover {
-  background: #041508;
-}
-
-.btn-finalize:disabled {
-  background-color: #e1ebe5;
-  cursor: not-allowed;
-}

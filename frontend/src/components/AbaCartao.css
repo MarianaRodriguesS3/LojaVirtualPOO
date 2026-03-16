@@ -1,0 +1,61 @@
+.cartao-inputs{
+  display:flex;
+  gap:10px;
+  margin-bottom:15px;
+}
+
+.grupo-quadradinhos{
+  display:flex;
+  gap:4px;
+}
+
+.num-quadradinho{
+  width:25px;
+  height:25px;
+  border-radius:6px;
+  border:1px solid #bbb;
+  text-align:center;
+  font-weight:bold;
+}
+
+.linha-cvv-validade{
+  display:flex;
+  gap:15px;
+  margin-top:10px;
+}
+
+.validade-input{
+  width:40px;
+  text-align:center;
+  border:1px solid #bbb;
+  border-radius:5px;
+}
+
+.barra-validade{
+  font-weight:bold;
+  font-size:18px;
+}
+
+.campo-validade,
+.campo-cvv{
+  display:flex;
+  align-items:center;
+  gap:5px;
+}
+
+.info{
+  width:18px;
+  height:18px;
+  border-radius:50%;
+  background:#756e6e;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+}
+
+.cvv-info-wrapper{
+  position:relative;
+  display:inline-flex;
+  align-items:center;
+}
