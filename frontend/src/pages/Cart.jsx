@@ -40,24 +40,21 @@ function Cart() {
   }
 
   const handleBuySingle = (item) => {
-    navigate("/checkout", { state: { product: item } });
+    navigate("/finalizar-compra", { state: { products: [item] } });
   };
 
   const handleFinalizeCart = () => {
-    const itemsToRemove = cartItems.filter((item) => {
+    const itemsToBuy = cartItems.filter((item) => {
       const key = `${item.id}-${item.size}-${item.name}`;
       return selectedItems[key];
     });
 
-    if (itemsToRemove.length === 0) {
+    if (itemsToBuy.length === 0) {
       alert("Nenhum produto selecionado para compra.");
       return;
     }
 
-    alert("Compra finalizada com sucesso!");
-    itemsToRemove.forEach((item) => {
-      removeFromCart(item.id, item.size || null, item.name);
-    });
+    navigate("/finalizar-compra", { state: { products: itemsToBuy } });
   };
 
   return (

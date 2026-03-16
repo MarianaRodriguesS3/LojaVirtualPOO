@@ -29,12 +29,15 @@ function Checkout() {
 
       <div className="cart-item checkout-layout-grid">
         <div className="checkout-col-image">
-          <img src={`http://localhost:5000/images/${product.image}`} alt={product.name} />
+          <img
+            src={`http://localhost:5000/images/${product.image}`}
+            alt={product.name}
+          />
         </div>
 
         <div className="checkout-col-selectors">
           <div className="size-selector">
-            {[34,35,36,37,38,39,40,41,42].map((size) => (
+            {[34, 35, 36, 37, 38, 39, 40, 41, 42].map((size) => (
               <button
                 key={size}
                 className={`size-btn ${selectedSize === size ? "selected" : ""}`}
@@ -68,11 +71,14 @@ function Checkout() {
               onClick={() =>
                 navigate("/finalizar-compra", {
                   state: {
-                    product: {
-                      ...product,
-                      size: selectedSize,
-                      quantity: quantity,
-                    },
+                    // Passa como array 'products' para compatibilidade
+                    products: [
+                      {
+                        ...product,
+                        size: selectedSize,
+                        quantity: quantity,
+                      },
+                    ],
                   },
                 })
               }
