@@ -3,10 +3,11 @@ const jwt = require('jsonwebtoken');
 const JWT_SECRET = process.env.JWT_SECRET || "SEGREDO_SUPER_SEGURO";
 
 class UsuarioController {
-  // Registro de usuário
+
+  // Registro
   async register(req, res) {
     try {
-      const { nome, email, password, confirmPassword } = req.body;
+      const { nome, email, password, confirmPassword, cpf, endereco } = req.body;
 
       if (!nome || !email || !password || !confirmPassword) {
         return res.status(400).json({ message: "Preencha todos os campos" });
@@ -20,20 +21,16 @@ class UsuarioController {
         return res.status(400).json({ message: "A senha deve ter no mínimo 8 caracteres" });
       }
 
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailRegex.test(email)) {
-        return res.status(400).json({ message: "Email inválido" });
-      }
-
-      const usuario = await UsuarioService.cadastrarUsuario(nome, email, password);
+      const usuario = await UsuarioService.cadastrarUsuario(nome, email, password, cpf, endereco);
       res.status(201).json(usuario.toJSON());
+
     } catch (err) {
       console.error(err);
       res.status(400).json({ message: err.message });
     }
   }
 
-  // Login de usuário
+  // Login
   async login(req, res) {
     try {
       const { email, password } = req.body;
@@ -51,13 +48,14 @@ class UsuarioController {
       );
 
       res.json({ token, user: usuario.toJSON() });
+
     } catch (err) {
       console.error(err);
       res.status(400).json({ message: err.message });
     }
   }
 
-  // Verifica se o email existe no banco
+  // Verificar email (edição)
   async verificarEmail(req, res) {
     try {
       const { email } = req.body;
@@ -66,20 +64,33 @@ class UsuarioController {
         return res.status(400).json({ message: "Informe o email" });
       }
 
-      const usuario = await UsuarioService.buscarPorEmail(email);
+      let usuario = await UsuarioService.buscarPorEmail(email);
 
       if (!usuario) {
-        return res.status(404).json({ message: "Email não cadastrado" });
+        const dadosMock = UsuarioService.gerarDadosMock(email);
+        return res.json({ user: dadosMock });
       }
 
       res.json({ user: usuario.toJSON() });
+
     } catch (err) {
       console.error(err);
       res.status(500).json({ message: "Erro no servidor" });
     }
   }
 
-  // Atualiza cadastro do usuário
+  // 🔥 Dados iniciais para cadastro novo
+  async dadosIniciais(req, res) {
+    try {
+      const dados = UsuarioService.gerarDadosIniciais();
+      res.json({ user: dados });
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ message: "Erro ao gerar dados iniciais" });
+    }
+  }
+
+  // Atualizar usuário
   async editarUsuario(req, res) {
     try {
       const { id } = req.params;
@@ -94,13 +105,9 @@ class UsuarioController {
         return res.status(404).json({ message: "Usuário não encontrado" });
       }
 
-      if (password && password.length < 8) {
-        return res.status(400).json({ message: "A senha deve ter no mínimo 8 caracteres" });
-      }
-
       const usuarioAtualizado = await UsuarioService.atualizarUsuario(id, nome, email, password);
-
       res.json(usuarioAtualizado.toJSON());
+
     } catch (err) {
       console.error(err);
       res.status(500).json({ message: "Erro ao atualizar usuário" });

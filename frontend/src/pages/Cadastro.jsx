@@ -1,20 +1,122 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../services/api";
-import "./Login.css";
+import "./Cadastro.css";
 
 function Cadastro() {
+  const navigate = useNavigate();
+
   const [nome, setNome] = useState("");
+  const [cpf, setCpf] = useState(""); 
+  const [cep, setCep] = useState("");      
+  const [rua, setRua] = useState("");
+  const [numero, setNumero] = useState("");
+  const [bairro, setBairro] = useState("");
+  const [cidade, setCidade] = useState("");
+  const [estado, setEstado] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
-  const navigate = useNavigate();
+
+  // Função para aplicar máscara de CPF
+  const formatCpf = (value) => {
+    let v = value.replace(/\D/g, "");
+    if (v.length > 11) v = v.slice(0, 11);
+
+    if (v.length > 9) v = v.replace(/(\d{3})(\d{3})(\d{3})(\d{0,2})/, "$1.$2.$3-$4");
+    else if (v.length > 6) v = v.replace(/(\d{3})(\d{3})(\d{0,3})/, "$1.$2.$3");
+    else if (v.length > 3) v = v.replace(/(\d{3})(\d{0,3})/, "$1.$2");
+
+    return v;
+  };
+
+  // Carregar dados iniciais do backend
+  useEffect(() => {
+    const carregarDados = async () => {
+      try {
+        const res = await api.get("/usuario/dados-iniciais");
+        const user = res.data.user;
+
+        setCpf(user.cpf ? formatCpf(user.cpf) : "");
+        setNome(user.nome || "");
+        setEmail(user.email || "");
+
+        if (user.endereco) {
+          setCep(user.endereco.cep || "");
+          setRua(user.endereco.rua || "");
+          setNumero(user.endereco.numero || "");
+          setBairro(user.endereco.bairro || "");
+          setCidade(user.endereco.cidade || "");
+          setEstado(user.endereco.estado || "");
+        }
+
+      } catch (err) {
+        console.error("Erro ao carregar dados iniciais do backend", err);
+      }
+    };
+
+    carregarDados();
+  }, []);
+
+  // Digitação de CPF com máscara
+  const handleCpfChange = (e) => {
+    setCpf(formatCpf(e.target.value));
+  };
+
+  // Digitação de CEP com máscara
+  const handleCepChange = (e) => {
+    let value = e.target.value.replace(/\D/g, "");
+    if (value.length > 8) value = value.slice(0, 8);
+    if (value.length > 5) value = value.replace(/(\d{5})(\d{0,3})/, "$1-$2");
+    setCep(value);
+  };
 
   const handleRegister = async (e) => {
     e.preventDefault();
+    setError("");
+
+    // validar campos obrigatórios
+    if (!nome || !email) {
+      setError("Preencha todos os campos obrigatórios");
+      return;
+    }
+
+    // validar email
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      setError("Email inválido");
+      return;
+    }
+
+    // validar senha apenas se for novo cadastro
+    if (!password || !confirmPassword) {
+      setError("Preencha a senha e confirmação de senha");
+      return;
+    }
+
+    if (password.length < 8) {
+      setError("A senha deve ter no mínimo 8 caracteres");
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      setError("As senhas não coincidem");
+      return;
+    }
+
     try {
-      await api.post("/usuario/register", { nome, email, password, confirmPassword });
+      const cpfNumeros = cpf.replace(/\D/g, "");
+      const cepNumeros = cep.replace(/\D/g, "");
+
+      await api.post("/usuario/register", {
+        nome,
+        cpf: cpfNumeros,
+        email,
+        password,
+        endereco: { cep: cepNumeros, rua, numero, bairro, cidade, estado }
+      });
+
       navigate("/login");
     } catch (err) {
       setError(err.response?.data?.message || "Erro ao cadastrar");
@@ -22,39 +124,68 @@ function Cadastro() {
   };
 
   return (
-    <div className="login-container">
+    <div className="cadastro-container">
       <h1>Cadastro</h1>
-      <form className="login-form" onSubmit={handleRegister}>
-        <input
-          type="text"
-          placeholder="Nome"
-          value={nome}
-          onChange={(e) => setNome(e.target.value)}
-        />
-        <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
-        <input
-          type="password"
-          placeholder="Senha"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-        <input
-          type="password"
-          placeholder="Confirmar senha"
-          value={confirmPassword}
-          onChange={(e) => setConfirmPassword(e.target.value)}
-        />
+      <form className="cadastro-form" onSubmit={handleRegister}>
+
+        {/* Nome e CPF */}
+        <div className="form-row">
+          <label className="label-nome">
+            Nome:
+            <input type="text" value={nome} onChange={(e) => setNome(e.target.value)} />
+          </label>
+          <label className="label-cpf">
+            CPF:
+            <input type="text" value={cpf} onChange={handleCpfChange} />
+          </label>
+        </div>
+
+        {/* Login */}
+        <h3>Login</h3>
+        <div className="form-row">
+          <label className="label-email">
+            Email:
+            <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+          </label>
+        </div>
+
+        <div className="form-row password-row">
+          <label>
+            Senha:
+            <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
+          </label>
+          <label>
+            Confirmar senha:
+            <input type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
+          </label>
+        </div>
+
+        {/* Endereço */}
+        <h3>Endereço</h3>
+        <div className="form-row">
+          <label className="label-cep">
+            CEP:
+            <input type="text" value={cep} onChange={handleCepChange} />
+          </label>
+        </div>
+
+        <div className="form-row">
+          <label className="label-rua">Rua:<input type="text" value={rua} onChange={(e) => setRua(e.target.value)} /></label>
+          <label className="label-numero">Número:<input type="text" value={numero} onChange={(e) => setNumero(e.target.value)} /></label>
+          <label className="label-bairro">Bairro:<input type="text" value={bairro} onChange={(e) => setBairro(e.target.value)} /></label>
+        </div>
+
+        <div className="form-row">
+          <label className="label-cidade">Cidade:<input type="text" value={cidade} onChange={(e) => setCidade(e.target.value)} /></label>
+          <label className="label-estado">Estado:<input type="text" value={estado} onChange={(e) => setEstado(e.target.value)} /></label>
+        </div>
+
         <button type="submit">Cadastrar</button>
       </form>
-      {error && <p className="login-error">{error}</p>}
-      <button className="back-button" onClick={() => navigate("/")}>
-        Voltar
-      </button>
+
+      {error && <p className="cadastro-error">{error}</p>}
+
+      <button className="back-button" onClick={() => navigate("/")}>Voltar</button>
     </div>
   );
 }

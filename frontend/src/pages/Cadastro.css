@@ -1,0 +1,141 @@
+.cadastro-container {
+  max-width: 600px;
+  margin: 50px auto;
+  padding: 30px;
+  background-color: #d0e2d6;
+  border-radius: 15px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+  display: flex;
+  flex-direction: column;
+}
+
+.cadastro-container h1 {
+  font-size: 28px;
+  text-align: center;
+  margin-bottom: 25px;
+}
+
+.cadastro-form {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+h3 {
+  font-size: 18px;
+  color: #022307;
+  margin-top: 20px;
+  margin-bottom: 10px;
+}
+
+/* LINHAS DE CAMPOS */
+.form-row {
+  display: flex;
+  gap: 5px;
+  flex-wrap: wrap;
+}
+
+.form-row label {
+  display: flex;
+  flex-direction: column;
+  font-size: 0.95rem;
+}
+
+/* LARGURAS PROPORCIONAIS */
+.label-nome {
+  flex: 3; /* maior que CPF */
+}
+.label-cpf {
+  flex: 1;   /* pequeno */
+}
+
+.label-cep {
+   width: 11ch;
+   flex: none;
+}
+
+.label-rua {
+  flex: 2.9;
+}
+.label-numero {
+  width: 60px;
+  flex: none;
+}
+.label-bairro {
+  flex: 1;
+}
+
+.label-cidade {
+  flex: 3;
+}
+.label-estado {
+  flex: 1;
+}
+
+/* Email ocupa toda a linha */
+.label-email {
+  flex: 1;
+}
+
+.form-row.password-row label {
+  flex: 1;
+}
+
+.form-row input {
+  padding: 10px 12px;
+  border: 1px solid #bbc4d6;
+  border-radius: 8px;
+  outline: none;
+  transition: 0.2s;
+}
+
+.form-row input:focus {
+  border-color: #0a014e;
+  box-shadow: 0 0 5px rgba(10,1,78,0.2);
+}
+
+.cadastro-form button {
+  padding: 12px;
+  background-color: #022307;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.2s;
+  margin-top: 10px;
+}
+
+.cadastro-form button:hover {
+  background-color: #011b04;
+}
+
+.cadastro-error {
+  color: #e53935;
+  font-size: 0.9rem;
+  margin-top: 10px;
+  text-align: center;
+}
+
+.back-button {
+  margin-top: 20px;
+  align-self: flex-end;
+  background-color: #757575;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.back-button:hover {
+  background-color: #616161;
+}
+
+/* Responsivo */
+@media (max-width: 600px) {
+  .form-row {
+    flex-direction: column;
+  }
+}
