@@ -83,6 +83,17 @@ export default function AbaCartao({ exibirMensagem }) {
       return false;
     }
 
+    // 🚨 NOVA VALIDAÇÃO DE VAZIO
+    if (!cartao.mes || !cartao.ano) {
+      exibirMensagem("Preencha a validade do cartão", "vermelho");
+      return false;
+    }
+
+    if (cartao.mes.length !== 2 || cartao.ano.length !== 2) {
+      exibirMensagem("Validade deve conter 2 dígitos para mês e ano", "vermelho");
+      return false;
+    }
+
     const mesNum = parseInt(cartao.mes);
     const anoNum = parseInt(cartao.ano);
 
@@ -127,9 +138,24 @@ export default function AbaCartao({ exibirMensagem }) {
               value={cartao.mes}
               onChange={(e) => {
                 let valor = e.target.value.replace(/\D/g, "");
-                if (valor.length > 2) valor = valor.slice(0, 2);
+
+                // 👉 Se tentar digitar mais de 2, joga pro ano
+                if (valor.length > 2) {
+                  const mes = valor.slice(0, 2);
+                  const extra = valor.slice(2);
+
+                  setCartao((prev) => ({
+                    ...prev,
+                    mes,
+                    ano: extra,
+                  }));
+
+                  anoRef.current?.focus();
+                  return;
+                }
 
                 setCartao((prev) => ({ ...prev, mes: valor }));
+
                 if (valor.length === 2) anoRef.current?.focus();
               }}
             />
@@ -147,6 +173,12 @@ export default function AbaCartao({ exibirMensagem }) {
 
                 if (valor.length === 2) cvvRef.current?.focus();
               }}
+              onKeyDown={(e) => {
+                // 👈 VOLTAR PRO MÊS AO APAGAR
+                if (e.key === "Backspace" && cartao.ano.length === 0) {
+                  mesRef.current?.focus();
+                }
+              }}
             />
           </div>
 
@@ -161,7 +193,9 @@ export default function AbaCartao({ exibirMensagem }) {
             />
 
             <div className="cvv-info-wrapper">
-              <span className="info" onClick={mostrarDicaCVV}>?</span>
+              <span className="info" onClick={mostrarDicaCVV}>
+                ?
+              </span>
 
               {mostrarDica && <AnimacaoCartao cvv={cartao.cvv} />}
             </div>

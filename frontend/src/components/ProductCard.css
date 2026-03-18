@@ -146,6 +146,7 @@
   color: #041508;
   border: 1px solid #022307;
   box-shadow: 0 6px 20px rgba(2, 35, 7, 0.3);
-  background-color: transparent;
-  backdrop-filter: blur(10px);
+  background: rgba(180, 230, 190, 0.15);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(12px);
 }
