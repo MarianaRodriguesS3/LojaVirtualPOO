@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import api from "../services/api";
 import "./Cadastro.css";
@@ -9,16 +9,15 @@ function EditarCadastro() {
 
   const user = location.state?.user;
 
-  // Dados do usuário
-  const [nome, setNome] = useState(user?.nome || "");
-  const [cpf, setCpf] = useState(user?.cpf || "");
-  const [cep, setCep] = useState(user?.cep || "");
-  const [rua, setRua] = useState(user?.rua || "");
-  const [numero, setNumero] = useState(user?.numero || "");
-  const [bairro, setBairro] = useState(user?.bairro || "");
-  const [cidade, setCidade] = useState(user?.cidade || "");
-  const [estado, setEstado] = useState(user?.estado || "");
-  const [email, setEmail] = useState(user?.email || "");
+  const [nome, setNome] = useState("");
+  const [cpf, setCpf] = useState("");
+  const [cep, setCep] = useState("");
+  const [rua, setRua] = useState("");
+  const [numero, setNumero] = useState("");
+  const [bairro, setBairro] = useState("");
+  const [cidade, setCidade] = useState("");
+  const [estado, setEstado] = useState("");
+  const [email, setEmail] = useState("");
 
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -26,10 +25,76 @@ function EditarCadastro() {
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
 
+  // Máscara CPF
+  const formatCpf = (value) => {
+    let v = value.replace(/\D/g, "");
+    if (v.length > 11) v = v.slice(0, 11);
+
+    if (v.length > 9)
+      v = v.replace(/(\d{3})(\d{3})(\d{3})(\d{0,2})/, "$1.$2.$3-$4");
+    else if (v.length > 6)
+      v = v.replace(/(\d{3})(\d{3})(\d{0,3})/, "$1.$2.$3");
+    else if (v.length > 3)
+      v = v.replace(/(\d{3})(\d{0,3})/, "$1.$2");
+
+    return v;
+  };
+
+  // Máscara CEP
+  const formatCep = (value) => {
+    let v = value.replace(/\D/g, "");
+    if (v.length > 8) v = v.slice(0, 8);
+    if (v.length > 5) v = v.replace(/(\d{5})(\d{0,3})/, "$1-$2");
+    return v;
+  };
+
+  // Carregar dados do usuário
+  useEffect(() => {
+    if (user) {
+      setNome(user.nome || "");
+      setCpf(user.cpf ? formatCpf(user.cpf) : "");
+      setEmail(user.email || "");
+
+      if (user.endereco) {
+        setCep(user.endereco.cep ? formatCep(user.endereco.cep) : "");
+        setRua(user.endereco.rua || "");
+        setNumero(user.endereco.numero || "");
+        setBairro(user.endereco.bairro || "");
+        setCidade(user.endereco.cidade || "");
+        setEstado(user.endereco.estado || "");
+      }
+    }
+  }, [user]);
+
+  const handleCpfChange = (e) => {
+    setCpf(formatCpf(e.target.value));
+  };
+
+  const handleCepChange = (e) => {
+    setCep(formatCep(e.target.value));
+  };
+
   const handleUpdate = async (e) => {
     e.preventDefault();
     setError("");
     setMessage("");
+
+    // validações
+    if (!nome || !email) {
+      setError("Preencha os campos obrigatórios");
+      return;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      setError("Email inválido");
+      return;
+    }
+
+    if (password && password.length < 8) {
+      setError("A senha deve ter no mínimo 8 caracteres");
+      return;
+    }
 
     if (password !== confirmPassword) {
       setError("As senhas não coincidem");
@@ -37,22 +102,26 @@ function EditarCadastro() {
     }
 
     try {
+      const cpfNumeros = cpf.replace(/\D/g, "");
+      const cepNumeros = cep.replace(/\D/g, "");
+
       await api.put(`/usuario/editar/${user.id}`, {
         nome,
-        cpf,
-        cep,
-        rua,
-        numero,
-        bairro,
-        cidade,
-        estado,
+        cpf: cpfNumeros,
         email,
-        password
+        password: password || undefined,
+        endereco: {
+          cep: cepNumeros,
+          rua,
+          numero,
+          bairro,
+          cidade,
+          estado,
+        },
       });
 
       setMessage("Cadastro atualizado com sucesso!");
       setTimeout(() => navigate("/login"), 2000);
-
     } catch (err) {
       setError(err.response?.data?.message || "Erro ao atualizar cadastro");
     }
@@ -63,7 +132,6 @@ function EditarCadastro() {
       <h1>Editar Cadastro</h1>
 
       <form className="cadastro-form" onSubmit={handleUpdate}>
-
         {/* Nome e CPF */}
         <div className="form-row">
           <label className="label-nome">
@@ -80,7 +148,7 @@ function EditarCadastro() {
             <input
               type="text"
               value={cpf}
-              onChange={(e) => setCpf(e.target.value)}
+              onChange={handleCpfChange}
             />
           </label>
         </div>
@@ -114,7 +182,9 @@ function EditarCadastro() {
             <input
               type="password"
               value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
+              onChange={(e) =>
+                setConfirmPassword(e.target.value)
+              }
             />
           </label>
         </div>
@@ -128,7 +198,7 @@ function EditarCadastro() {
             <input
               type="text"
               value={cep}
-              onChange={(e) => setCep(e.target.value)}
+              onChange={handleCepChange}
             />
           </label>
         </div>

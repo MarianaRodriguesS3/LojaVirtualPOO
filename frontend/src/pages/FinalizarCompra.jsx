@@ -1,10 +1,11 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import "./FinalizarCompra.css";
 import AbaPix from "../components/AbaPix";
 import AbaCartao from "../components/AbaCartao";
 import BtnFinalizarCompra from "../components/BtnFinalizarCompra";
 import { CartContext } from "../context/CartContext";
+import api from "../services/api";
 
 export default function FinalizarCompra() {
   const location = useLocation();
@@ -13,17 +14,15 @@ export default function FinalizarCompra() {
 
   // Dados do cliente
   const [dados, setDados] = useState({
-    nome: "João da Silva",
-    cpf: "123.456.789-00",
-    endereco: "Rua Exemplo, 123 - Centro - São Paulo",
+    nome: "",
+    cpf: "",
+    endereco: "",
   });
-
-  const handleChange = (e) =>
-    setDados({ ...dados, [e.target.name]: e.target.value });
 
   const [mensagem, setMensagem] = useState({ texto: "", cor: "" });
   const [abaAtiva, setAbaAtiva] = useState(null);
 
+  // Exibe mensagem temporária
   const exibirMensagem = (texto, cor) => {
     setMensagem({ texto, cor });
     setTimeout(() => setMensagem({ texto: "", cor: "" }), 3000);
@@ -35,6 +34,40 @@ export default function FinalizarCompra() {
   const totalGeral = products
     ? products.reduce((acc, p) => acc + p.price * p.quantity, 0).toFixed(2)
     : "0.00";
+
+  // Carregar dados do usuário logado
+  useEffect(() => {
+    const carregarDadosUsuario = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        if (!token) return;
+
+        const res = await api.get("/usuario/dados-usuario", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        const user = res.data.user;
+
+        // Montar string de endereço completa
+        const enderecoCompleto = `${user.endereco?.rua || ""}, ${user.endereco?.numero || ""} - ${user.endereco?.bairro || ""} - ${user.endereco?.cidade || ""} - ${user.endereco?.estado || ""} - ${user.endereco?.cep || ""}`;
+
+        setDados({
+          nome: user.nome || "",
+          cpf: user.cpf || "",
+          endereco: enderecoCompleto,
+        });
+      } catch (err) {
+        console.error("Erro ao carregar dados do usuário", err);
+      }
+    };
+
+    carregarDadosUsuario();
+  }, []);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setDados((prev) => ({ ...prev, [name]: value }));
+  };
 
   const finalizarPagamento = () => {
     if (!abaAtiva) {
@@ -67,7 +100,6 @@ export default function FinalizarCompra() {
     <div className="container">
       <h2>Finalizar Compra</h2>
 
-      {/* Lista de produtos */}
       {products.map((product, index) => {
         const total = (product.price * product.quantity).toFixed(2);
         return (
