@@ -38,14 +38,17 @@
 
 ## Página: ResetPassword
 
+# Backend
+
+...
 
 
 ## Novas Funcionalidades
 
-
 - Favicon personalizado
 - Criar logo e nome da loja
 - Criar um footer
+- fazer numeração do cartão ser unica por usuário
 
 ### nova pagina
 
