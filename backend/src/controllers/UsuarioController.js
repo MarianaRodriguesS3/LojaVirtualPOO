@@ -4,7 +4,7 @@ const JWT_SECRET = process.env.JWT_SECRET || "SEGREDO_SUPER_SEGURO";
 
 class UsuarioController {
 
-  // Registro
+  // Registro de novo usuário
   async register(req, res) {
     try {
       const { nome, email, password, cpf, endereco } = req.body;
@@ -17,7 +17,6 @@ class UsuarioController {
         return res.status(400).json({ message: "A senha deve ter no mínimo 8 caracteres" });
       }
 
-      // Nova regra: email duplicado
       const usuarioExistente = await UsuarioService.buscarPorEmail(email);
       if (usuarioExistente) {
         return res.status(400).json({ message: "Email já cadastrado" });
@@ -30,12 +29,12 @@ class UsuarioController {
       return res.status(201).json(usuario.toJSON());
 
     } catch (err) {
-      console.error(err);
+      console.error("Erro no registro:", err);
       return res.status(400).json({ message: err.message });
     }
   }
 
-  // Login
+  // Login do usuário
   async login(req, res) {
     try {
       const { email, password } = req.body;
@@ -52,12 +51,12 @@ class UsuarioController {
       res.json({ token, user: usuario.toJSON() });
 
     } catch (err) {
-      console.error(err);
+      console.error("Erro no login:", err);
       res.status(400).json({ message: err.message });
     }
   }
 
-  // Verificar email (esqueci senha)
+  // Verificar se email existe
   async verificarEmail(req, res) {
     try {
       const { email } = req.body;
@@ -69,12 +68,12 @@ class UsuarioController {
       return res.status(200).json({ user: usuario.toJSON() });
 
     } catch (err) {
-      console.error(err);
+      console.error("Erro ao verificar email:", err);
       return res.status(500).json({ message: "Erro no servidor" });
     }
   }
 
-  // Endpoint para retornar dados do usuário logado
+  // Obter dados do perfil logado
   async dadosUsuario(req, res) {
     try {
       const authHeader = req.headers.authorization;
@@ -89,23 +88,23 @@ class UsuarioController {
       res.status(200).json({ user: usuario.toJSON() });
 
     } catch (err) {
-      console.error(err);
-      res.status(401).json({ message: "Token inválido" });
+      console.error("Erro ao buscar dados do usuário:", err);
+      res.status(401).json({ message: "Token inválido ou expirado" });
     }
   }
 
-  // Dados iniciais para cadastro novo
+  // Gerar dados aleatórios para o formulário (ex: CPF, Endereço mock)
   async dadosIniciais(req, res) {
     try {
       const dados = await UsuarioService.gerarDadosIniciais();
       res.json({ user: dados });
     } catch (err) {
-      console.error(err);
+      console.error("Erro ao gerar dados iniciais:", err);
       res.status(500).json({ message: "Erro ao gerar dados iniciais" });
     }
   }
 
-  // Atualizar usuário
+  // Editar perfil do usuário
   async editarUsuario(req, res) {
     try {
       const { id } = req.params;
@@ -123,8 +122,80 @@ class UsuarioController {
       res.json(usuarioAtualizado.toJSON());
 
     } catch (err) {
-      console.error(err);
+      console.error("Erro ao editar usuário:", err);
       res.status(500).json({ message: "Erro ao atualizar usuário" });
+    }
+  }
+
+  // 🔥 OBTER CARTÃO (Busca no banco ou gera um visual para o frontend)
+  async obterCartao(req, res) {
+    try {
+      const authHeader = req.headers.authorization;
+      if (!authHeader) return res.status(401).json({ message: "Token não fornecido" });
+
+      const token = authHeader.split(" ")[1];
+      const decoded = jwt.verify(token, JWT_SECRET);
+
+      const cartao = await UsuarioService.obterOuGerarCartao(decoded.id);
+      res.json(cartao);
+
+    } catch (err) {
+      console.error("Erro ao obter cartão:", err);
+      res.status(500).json({ message: "Erro ao obter cartão" });
+    }
+  }
+
+  // 🔥 SALVAR CARTÃO (Direto do painel de configurações ou checkout)
+  async salvarCartao(req, res) {
+    try {
+      const authHeader = req.headers.authorization;
+      if (!authHeader) return res.status(401).json({ message: "Token não fornecido" });
+
+      const token = authHeader.split(" ")[1];
+      const decoded = jwt.verify(token, JWT_SECRET);
+
+      const { cartao } = req.body;
+      if (!cartao) return res.status(400).json({ message: "Dados do cartão não fornecidos" });
+
+      await UsuarioService.salvarCartao(decoded.id, cartao);
+      res.status(200).json({ sucesso: true, message: "Cartão salvo com sucesso!" });
+
+    } catch (err) {
+      console.error("Erro ao salvar cartão:", err);
+      res.status(500).json({ message: "Erro ao salvar cartão" });
+    }
+  }
+
+  // 🔥 FINALIZAR COMPRA
+  async finalizarCompra(req, res) {
+    try {
+      const authHeader = req.headers.authorization;
+      if (!authHeader) return res.status(401).json({ message: "Token não fornecido" });
+
+      const token = authHeader.split(" ")[1];
+      const decoded = jwt.verify(token, JWT_SECRET);
+
+      const { cartao, salvarCartaoNoBanco } = req.body;
+
+      // Log para conferência no terminal
+      console.log("Processando compra para Usuario ID:", decoded.id);
+
+      // Se o usuário marcou o checkbox no Frontend
+      if (salvarCartaoNoBanco && cartao) {
+        console.log("Checkbox 'salvar' marcado. Persistindo no banco...");
+        await UsuarioService.salvarCartao(decoded.id, cartao);
+      }
+
+      // Aqui você poderia integrar com Stripe/PagSeguro futuramente
+      res.json({ 
+        sucesso: true, 
+        message: "Compra finalizada com sucesso!",
+        protocolo: Math.floor(Math.random() * 1000000)
+      });
+
+    } catch (err) {
+      console.error("Erro no Controller finalizarCompra:", err);
+      res.status(500).json({ message: "Erro interno ao finalizar a compra" });
     }
   }
 }

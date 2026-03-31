@@ -42,15 +42,13 @@
 
 ## Novas Funcionalidades
 
-
 - Favicon personalizado
 - Criar logo e nome da loja
-- Criar um footer
 
 ### nova pagina
 
 - meus pedidos (pagina que acompanha a compra após ser finalizada)
-
+- Criar um footer
 
 
 # Sistema de E-commerce
