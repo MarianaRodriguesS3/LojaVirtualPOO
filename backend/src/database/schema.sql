@@ -36,26 +36,14 @@ CREATE TABLE users (
   id INT AUTO_INCREMENT PRIMARY KEY,
   nome VARCHAR(255) NOT NULL,
   email VARCHAR(255) NOT NULL UNIQUE,
-  password VARCHAR(255) NOT NULL,
-  reset_token VARCHAR(255) NULL,
-  reset_token_expire DATETIME NULL,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
-ALTER TABLE users
-ADD COLUMN cpf VARCHAR(14) UNIQUE,
-ADD COLUMN endereco VARCHAR(255);
-
-CREATE TABLE users (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  nome VARCHAR(255) NOT NULL,
-  email VARCHAR(255) NOT NULL UNIQUE,
   cpf VARCHAR(14) NOT NULL UNIQUE,
   password VARCHAR(255) NOT NULL,
   reset_token VARCHAR(255) NULL,
   reset_token_expire DATETIME NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+-- cadastro de endereços
 
 CREATE TABLE enderecos (
   id INT AUTO_INCREMENT PRIMARY KEY,
@@ -67,5 +55,18 @@ CREATE TABLE enderecos (
   cidade VARCHAR(100),
   estado VARCHAR(2),
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (usuario_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+-- cadastro de cartões
+
+CREATE TABLE cartoes (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  usuario_id INT NOT NULL,
+  numero VARCHAR(16), 
+  mes VARCHAR(2),
+  ano VARCHAR(4),
+  cvv VARCHAR(3),
+  UNIQUE (usuario_id),
   FOREIGN KEY (usuario_id) REFERENCES users(id) ON DELETE CASCADE
 );

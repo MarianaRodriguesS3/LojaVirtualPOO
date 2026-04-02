@@ -47,9 +47,8 @@
 
 - Favicon personalizado
 - Criar logo e nome da loja
-- Criar um footer
-- fazer numeração do cartão ser unica por usuário
 
 ### nova pagina
 
 - meus pedidos (pagina que acompanha a compra após ser finalizada)
+- Criar um footer

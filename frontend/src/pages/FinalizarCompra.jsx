@@ -12,7 +12,6 @@ export default function FinalizarCompra() {
   const { products } = location.state || {};
   const { removeFromCart } = useContext(CartContext);
 
-  // Dados do cliente
   const [dados, setDados] = useState({
     nome: "",
     cpf: "",
@@ -22,7 +21,6 @@ export default function FinalizarCompra() {
   const [mensagem, setMensagem] = useState({ texto: "", cor: "" });
   const [abaAtiva, setAbaAtiva] = useState(null);
 
-  // Exibe mensagem temporária
   const exibirMensagem = (texto, cor) => {
     setMensagem({ texto, cor });
     setTimeout(() => setMensagem({ texto: "", cor: "" }), 3000);
@@ -35,7 +33,6 @@ export default function FinalizarCompra() {
     ? products.reduce((acc, p) => acc + p.price * p.quantity, 0).toFixed(2)
     : "0.00";
 
-  // Carregar dados do usuário logado
   useEffect(() => {
     const carregarDadosUsuario = async () => {
       try {
@@ -47,8 +44,6 @@ export default function FinalizarCompra() {
         });
 
         const user = res.data.user;
-
-        // Montar string de endereço completa
         const enderecoCompleto = `${user.endereco?.rua || ""}, ${user.endereco?.numero || ""} - ${user.endereco?.bairro || ""} - ${user.endereco?.cidade || ""} - ${user.endereco?.estado || ""} - ${user.endereco?.cep || ""}`;
 
         setDados({
@@ -69,23 +64,49 @@ export default function FinalizarCompra() {
     setDados((prev) => ({ ...prev, [name]: value }));
   };
 
-  const finalizarPagamento = () => {
+  // --- FUNÇÃO DE FINALIZAÇÃO CORRIGIDA ---
+  const finalizarPagamento = async () => {
     if (!abaAtiva) {
       exibirMensagem("Escolher forma de pagamento", "vermelho");
       return;
     }
 
-    if (abaAtiva === "cartao") {
-      const valido = window.validarCartao?.();
-      if (!valido) return;
+    try {
+      const token = localStorage.getItem("token");
+      
+      // Objeto base da compra
+      let payload = {
+        produtos: products,
+        total: totalGeral,
+        formaPagamento: abaAtiva
+      };
+
+      // Se for cartão, valida e anexa os dados globais definidos na AbaCartao
+      if (abaAtiva === "cartao") {
+        const valido = window.validarCartao?.();
+        if (!valido) return;
+
+        payload.cartao = window.dadosAtuaisDoCartao;
+        payload.salvarCartaoNoBanco = window.deveSalvarCartaoNoBanco;
+      }
+
+      // CHAMADA PARA O BACKEND (O que estava faltando!)
+      const response = await api.post("/usuario/finalizar-compra", payload, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      if (response.data.sucesso) {
+        exibirMensagem("Compra finalizada com sucesso!", "verde");
+
+        // Remove os produtos do carrinho local
+        products.forEach((product) => {
+          removeFromCart(product.id, product.size, product.name);
+        });
+      }
+    } catch (err) {
+      console.error("Erro ao processar compra:", err);
+      exibirMensagem("Erro ao processar pagamento. Tente novamente.", "vermelho");
     }
-
-    exibirMensagem("Compra finalizada", "verde");
-
-    // Remove os produtos do carrinho
-    products.forEach((product) => {
-      removeFromCart(product.id, product.size, product.name);
-    });
   };
 
   if (!products || products.length === 0) {
@@ -122,7 +143,6 @@ export default function FinalizarCompra() {
 
       <h3>Total do pedido: R$ {totalGeral}</h3>
 
-      {/* Dados do cliente */}
       <div className="form">
         <h3>Dados do Cliente</h3>
         <label>Nome</label>
@@ -135,7 +155,6 @@ export default function FinalizarCompra() {
         <input name="endereco" value={dados.endereco} onChange={handleChange} />
       </div>
 
-      {/* Abas de pagamento */}
       <div className="tabs">
         <h3>Forma de Pagamento</h3>
         <button
