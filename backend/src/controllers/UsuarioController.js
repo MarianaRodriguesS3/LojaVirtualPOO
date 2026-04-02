@@ -93,7 +93,7 @@ class UsuarioController {
     }
   }
 
-  // Gerar dados aleatórios para o formulário (ex: CPF, Endereço mock)
+  // Gerar dados iniciais
   async dadosIniciais(req, res) {
     try {
       const dados = await UsuarioService.gerarDadosIniciais();
@@ -104,19 +104,26 @@ class UsuarioController {
     }
   }
 
-  // Editar perfil do usuário
+  // 🔥 CORRIGIDO AQUI
   async editarUsuario(req, res) {
     try {
       const { id } = req.params;
-      const { nome, email, password, endereco } = req.body;
 
-      if (!nome || !email) return res.status(400).json({ message: "Nome e email são obrigatórios" });
+      // ✅ AGORA PEGANDO CPF
+      const { nome, email, password, cpf, endereco } = req.body;
+
+      if (!nome || !email) {
+        return res.status(400).json({ message: "Nome e email são obrigatórios" });
+      }
 
       const usuario = await UsuarioService.buscarPorId(id);
-      if (!usuario) return res.status(404).json({ message: "Usuário não encontrado" });
+      if (!usuario) {
+        return res.status(404).json({ message: "Usuário não encontrado" });
+      }
 
+      // ✅ AGORA ENVIANDO CPF
       const usuarioAtualizado = await UsuarioService.atualizarUsuario(
-        id, nome, email, password, endereco
+        id, nome, email, password, cpf, endereco
       );
 
       res.json(usuarioAtualizado.toJSON());
@@ -127,7 +134,7 @@ class UsuarioController {
     }
   }
 
-  // 🔥 OBTER CARTÃO (Busca no banco ou gera um visual para o frontend)
+  // Obter cartão
   async obterCartao(req, res) {
     try {
       const authHeader = req.headers.authorization;
@@ -145,7 +152,7 @@ class UsuarioController {
     }
   }
 
-  // 🔥 SALVAR CARTÃO (Direto do painel de configurações ou checkout)
+  // Salvar cartão
   async salvarCartao(req, res) {
     try {
       const authHeader = req.headers.authorization;
@@ -166,7 +173,7 @@ class UsuarioController {
     }
   }
 
-  // 🔥 FINALIZAR COMPRA
+  // Finalizar compra
   async finalizarCompra(req, res) {
     try {
       const authHeader = req.headers.authorization;
@@ -177,18 +184,15 @@ class UsuarioController {
 
       const { cartao, salvarCartaoNoBanco } = req.body;
 
-      // Log para conferência no terminal
       console.log("Processando compra para Usuario ID:", decoded.id);
 
-      // Se o usuário marcou o checkbox no Frontend
       if (salvarCartaoNoBanco && cartao) {
-        console.log("Checkbox 'salvar' marcado. Persistindo no banco...");
+        console.log("Salvando cartão no banco...");
         await UsuarioService.salvarCartao(decoded.id, cartao);
       }
 
-      // Aqui você poderia integrar com Stripe/PagSeguro futuramente
-      res.json({ 
-        sucesso: true, 
+      res.json({
+        sucesso: true,
         message: "Compra finalizada com sucesso!",
         protocolo: Math.floor(Math.random() * 1000000)
       });

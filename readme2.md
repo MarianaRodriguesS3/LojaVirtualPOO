@@ -48,7 +48,9 @@
 - Favicon personalizado
 - Criar logo e nome da loja
 
-### nova pagina
+### Nova pagina
 
 - meus pedidos (pagina que acompanha a compra após ser finalizada)
 - Criar um footer
+
+
