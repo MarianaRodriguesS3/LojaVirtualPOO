@@ -5,7 +5,8 @@ import Header from "./components/Header";
 import Home from "./pages/Home";
 import Cart from "./pages/Cart";
 import Checkout from "./pages/Checkout";
-import FinalizarCompra from "./pages/FinalizarCompra"; // <-- import da nova página
+import FinalizarCompra from "./pages/FinalizarCompra";
+import StatusProduto from "./pages/StatusPedido"; // 🔥 NOVA IMPORTAÇÃO
 import Login from "./pages/Login";
 import Cadastro from "./pages/Cadastro";
 import ForgotPassword from "./pages/ForgotPassword";
@@ -16,8 +17,8 @@ import ProtectedRoute from "./routes/ProtectedRoute";
 function App() {
   return (
     <BrowserRouter>
-      <Header /> {/* Cabeçalho */}
-      <CartMessage /> {/* Notificação de adição ao carrinho */}
+      <Header />
+      <CartMessage />
 
       <main>
         <Routes>
@@ -54,6 +55,16 @@ function App() {
             element={
               <ProtectedRoute>
                 <FinalizarCompra />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Status do Pedido - Protegido */}
+          <Route
+            path="/status-pedido"
+            element={
+              <ProtectedRoute>
+                <StatusProduto />
               </ProtectedRoute>
             }
           />

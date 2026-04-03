@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import "./FinalizarCompra.css";
 import AbaPix from "../components/AbaPix";
 import AbaCartao from "../components/AbaCartao";
@@ -9,6 +9,7 @@ import api from "../services/api";
 
 export default function FinalizarCompra() {
   const location = useLocation();
+  const navigate = useNavigate(); // 🔥 ADICIONADO
   const { products } = location.state || {};
   const { removeFromCart } = useContext(CartContext);
 
@@ -64,7 +65,7 @@ export default function FinalizarCompra() {
     setDados((prev) => ({ ...prev, [name]: value }));
   };
 
-  // --- FUNÇÃO DE FINALIZAÇÃO CORRIGIDA ---
+  // ✅ FUNÇÃO COM REDIRECIONAMENTO
   const finalizarPagamento = async () => {
     if (!abaAtiva) {
       exibirMensagem("Escolher forma de pagamento", "vermelho");
@@ -73,15 +74,13 @@ export default function FinalizarCompra() {
 
     try {
       const token = localStorage.getItem("token");
-      
-      // Objeto base da compra
+
       let payload = {
         produtos: products,
         total: totalGeral,
-        formaPagamento: abaAtiva
+        formaPagamento: abaAtiva,
       };
 
-      // Se for cartão, valida e anexa os dados globais definidos na AbaCartao
       if (abaAtiva === "cartao") {
         const valido = window.validarCartao?.();
         if (!valido) return;
@@ -90,18 +89,28 @@ export default function FinalizarCompra() {
         payload.salvarCartaoNoBanco = window.deveSalvarCartaoNoBanco;
       }
 
-      // CHAMADA PARA O BACKEND (O que estava faltando!)
       const response = await api.post("/usuario/finalizar-compra", payload, {
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { Authorization: `Bearer ${token}` },
       });
 
       if (response.data.sucesso) {
         exibirMensagem("Compra finalizada com sucesso!", "verde");
 
-        // Remove os produtos do carrinho local
+        // Limpa carrinho
         products.forEach((product) => {
           removeFromCart(product.id, product.size, product.name);
         });
+
+        // 🔥 REDIRECIONA PARA STATUS
+        setTimeout(() => {
+          navigate("/status-pedido", {
+            state: {
+              produtos: products,
+              total: totalGeral,
+              etapa: 0, // início do status
+            },
+          });
+        }, 1000); // pequeno delay pra mostrar mensagem
       }
     } catch (err) {
       console.error("Erro ao processar compra:", err);
@@ -157,18 +166,21 @@ export default function FinalizarCompra() {
 
       <div className="tabs">
         <h3>Forma de Pagamento</h3>
+
         <button
           className={abaAtiva === "pix" ? "selecionado" : ""}
           onClick={() => toggleAba("pix")}
         >
           Pix
         </button>
+
         <button
           className={abaAtiva === "boleto" ? "selecionado" : ""}
           onClick={() => toggleAba("boleto")}
         >
           Boleto
         </button>
+
         <button
           className={abaAtiva === "cartao" ? "selecionado" : ""}
           onClick={() => toggleAba("cartao")}
@@ -177,8 +189,13 @@ export default function FinalizarCompra() {
         </button>
       </div>
 
-      {(abaAtiva === "pix" || abaAtiva === "boleto") && <AbaPix tipo={abaAtiva} />}
-      {abaAtiva === "cartao" && <AbaCartao exibirMensagem={exibirMensagem} />}
+      {(abaAtiva === "pix" || abaAtiva === "boleto") && (
+        <AbaPix tipo={abaAtiva} />
+      )}
+
+      {abaAtiva === "cartao" && (
+        <AbaCartao exibirMensagem={exibirMensagem} />
+      )}
 
       <div className="finalizar-btn-wrapper">
         <BtnFinalizarCompra onClick={finalizarPagamento} />
