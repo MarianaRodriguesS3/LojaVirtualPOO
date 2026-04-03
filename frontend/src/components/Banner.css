@@ -1,20 +1,48 @@
 .banner {
-  background-color: #fff;
-  max-width: 1200px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  
+  background-color: #010602;
+  padding: 20px;
+  max-width: 1120px;
   margin: 20px auto;
-  padding: 30px 20px;
   border-radius: 10px;
-  box-shadow: 0 2px 8px rgba(2, 35, 7, 0.1);
+  gap: 70px;
+}
+
+.banner-logo {
+  width: 150px;
+  height: auto;
+  filter: drop-shadow(0 0 10px rgba(0, 255, 0, 0.4));
+}
+
+.banner-content {
+  text-align: left; /* Garante que o texto fique alinhado à esquerda dentro do seu bloco */
 }
 
 .banner-title {
+  color: #016001;
+  font-size: 2rem;
   margin: 0;
-  font-size: 1.8rem;
-  color: #022307;
 }
 
 .banner-subtitle {
-  margin-top: 10px;
+  color: #fff;
+  opacity: 0.8;
+  margin: 5px 0 0 0;
   font-size: 1rem;
-  color: #022307;
+}
+
+/* Responsividade: Volta a ficar um em cima do outro em telas de celular */
+@media (max-width: 768px) {
+  .banner {
+    flex-direction: column;
+    text-align: center;
+    gap: 15px;
+  }
+  .banner-content {
+    text-align: center;
+  }
 }

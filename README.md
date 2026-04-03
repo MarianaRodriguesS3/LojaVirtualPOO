@@ -102,6 +102,8 @@ O banco de dados é responsável por armazenar e organizar as informações do s
 
 ## Página: ResetPassword
 
+## Página: StatusPedido
+
 # Backend
 
 ...
@@ -109,12 +111,12 @@ O banco de dados é responsável por armazenar e organizar as informações do s
 
 ## Novas Funcionalidades
 
-- Favicon personalizado
-- Criar logo e nome da loja
+- Favicon personalizado - feito
+- Criar logo e nome da loja - feito
 
 ### Nova pagina
 
-- meus pedidos (pagina que acompanha a compra após ser finalizada)
+- meus pedidos (pagina que acompanha a compra após ser finalizada) - feito
 - Criar um footer
 
 
