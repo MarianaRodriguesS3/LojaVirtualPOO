@@ -117,7 +117,7 @@ O banco de dados é responsável por armazenar e organizar as informações do s
 ### Nova pagina
 
 - meus pedidos (pagina que acompanha a compra após ser finalizada) - feito
-- Criar um footer
+- Criar um footer - feito
 
 
 

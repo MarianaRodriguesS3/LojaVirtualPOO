@@ -2,21 +2,26 @@ import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import Header from "./components/Header";
+import Footer from "./components/Footer";
+import ScrollToTop from "./components/ScrollToTop";
+import CartMessage from "./components/CartMessage";
+import ProtectedRoute from "./routes/ProtectedRoute";
+
+// Páginas
 import Home from "./pages/Home";
 import Cart from "./pages/Cart";
 import Checkout from "./pages/Checkout";
 import FinalizarCompra from "./pages/FinalizarCompra";
-import StatusProduto from "./pages/StatusPedido"; // 🔥 NOVA IMPORTAÇÃO
+import StatusProduto from "./pages/StatusPedido";
 import Login from "./pages/Login";
 import Cadastro from "./pages/Cadastro";
 import ForgotPassword from "./pages/ForgotPassword";
 import EditarCadastro from "./pages/EditarCadastro";
-import CartMessage from "./components/CartMessage";
-import ProtectedRoute from "./routes/ProtectedRoute";
 
 function App() {
   return (
     <BrowserRouter>
+      <ScrollToTop /> {/* Aplica scroll automático para todas as rotas */}
       <Header />
       <CartMessage />
 
@@ -29,47 +34,15 @@ function App() {
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/editar-cadastro" element={<EditarCadastro />} />
 
-          {/* Carrinho - protegido */}
-          <Route
-            path="/carrinho"
-            element={
-              <ProtectedRoute>
-                <Cart />
-              </ProtectedRoute>
-            }
-          />
-
-          {/* Checkout - protegido */}
-          <Route
-            path="/checkout"
-            element={
-              <ProtectedRoute>
-                <Checkout />
-              </ProtectedRoute>
-            }
-          />
-
-          {/* Finalizar Compra - protegido */}
-          <Route
-            path="/finalizar-compra"
-            element={
-              <ProtectedRoute>
-                <FinalizarCompra />
-              </ProtectedRoute>
-            }
-          />
-
-          {/* Status do Pedido - Protegido */}
-          <Route
-            path="/status-pedido"
-            element={
-              <ProtectedRoute>
-                <StatusProduto />
-              </ProtectedRoute>
-            }
-          />
+          {/* Rotas protegidas */}
+          <Route path="/carrinho" element={<ProtectedRoute> <Cart /></ProtectedRoute>} />
+          <Route path="/checkout" element={<ProtectedRoute> <Checkout /></ProtectedRoute>} />
+          <Route path="/finalizar-compra" element={<ProtectedRoute><FinalizarCompra /></ProtectedRoute>} />
+          <Route path="/status-pedido" element={<ProtectedRoute><StatusProduto /></ProtectedRoute>} />
         </Routes>
       </main>
+
+      <Footer />
     </BrowserRouter>
   );
 }

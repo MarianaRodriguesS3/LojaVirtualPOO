@@ -88,3 +88,9 @@ h2 {
 .mensagem.verde {
   color: green; /* Apenas a cor do texto */
 }
+
+.endereco-grid {
+  display: grid;
+  grid-template-columns: 120px 70px 1fr;
+  gap: 10px;
+}
