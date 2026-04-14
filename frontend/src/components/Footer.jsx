@@ -9,7 +9,7 @@ function Footer() {
         <footer className="footer">
             <div className="footer-content">
                 <div className="footer-section footer-logo-name" onClick={() => navigate("/")}>
-                    <img src="/logo.png" alt="Logo Run Shoes" className="footer-logo"/>
+                    <img src={import.meta.env.BASE_URL + "logo.png"} alt="Logo Run Shoes" className="footer-logo"/>
                     <span className="footer-store-name">Run Shoes</span>
                     <p>© {new Date().getFullYear()} Todos os direitos reservados.</p>
                 </div>

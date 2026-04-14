@@ -59,20 +59,19 @@ const db = require(path.resolve(__dirname, '../src/database/connection'));
 
     // 📦 3. INSERIR PRODUTOS
     await db.query(`
-      INSERT INTO products (name, description, price, image)
-      VALUES
-        ('Tênis Feminino Branco', 'Confortável e moderno', 82.90, 'tenis1.jpeg'),
-        ('Tênis All Star', 'Clássico e versátil', 129.90, 'tenis2.jpeg'),
-        ('Tênis Nike Air Force', 'Estilo urbano', 109.90, 'tenis3.jpeg'),
-        ('Tênis Vans', 'Casual unissex', 89.90, 'tenis4.jpeg'),
-        ('Tênis Feminino Rosé', 'Elegante e confortável', 109.90, 'tenis5.jpeg'),
-        ('Tênis Adidas', 'Conforto esportivo', 259.90, 'tenis6.jpeg'),
-        ('Tênis Branco Casual', 'Uso diário confortável', 79.90, 'tenis7.jpeg'),
-        ('Tênis Shoes', 'Modelo casual moderno', 99.90, 'tenis8.jpeg');
-    `);
-
+  INSERT INTO products (name, description, price, image)
+  VALUES
+    ('Tênis Feminino Branco', 'Confortável e moderno', 82.90, 'https://runshoes-backend.onrender.com/images/tenis1.jpeg'),
+    ('Tênis All Star', 'Clássico e versátil', 129.90, 'https://runshoes-backend.onrender.com/images/tenis2.jpeg'),
+    ('Tênis Nike Air Force', 'Estilo urbano', 109.90, 'https://runshoes-backend.onrender.com/images/tenis3.jpeg'),
+    ('Tênis Vans', 'Casual unissex', 89.90, 'https://runshoes-backend.onrender.com/images/tenis4.jpeg'),
+    ('Tênis Feminino Rosé', 'Elegante e confortável', 109.90, 'https://runshoes-backend.onrender.com/images/tenis5.jpeg'),
+    ('Tênis Adidas', 'Conforto esportivo', 259.90, 'https://runshoes-backend.onrender.com/images/tenis6.jpeg'),
+    ('Tênis Branco Casual', 'Uso diário confortável', 79.90, 'https://runshoes-backend.onrender.com/images/tenis7.jpeg'),
+    ('Tênis Shoes', 'Modelo casual moderno', 99.90, 'https://runshoes-backend.onrender.com/images/tenis8.jpeg');
+`);
     // ✅ FINALIZAÇÃO
-    
+
     console.log("✅ Seed executado com sucesso!");
     process.exit();
 

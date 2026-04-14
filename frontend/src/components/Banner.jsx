@@ -5,7 +5,7 @@ function Banner() {
   return (
     <section className="banner">
       <img 
-        src="/logo.png" 
+        src={import.meta.env.BASE_URL + "logo.png"}
         alt="Logo Run Shoes" 
         className="banner-logo" 
       />
