@@ -7,6 +7,8 @@ function ProductCard({ product }) {
   const { addToCart, userToken } = useContext(CartContext);
   const navigate = useNavigate();
 
+  const IMAGE_BASE_URL = "https://runshoes-backend.onrender.com/images";
+
   const sizes = [34, 35, 36, 37, 38, 39, 40, 41, 42];
 
   const [centerIndex, setCenterIndex] = useState(4);
@@ -89,7 +91,7 @@ function ProductCard({ product }) {
 
       <div className="product-image">
         <img
-          src={`https://runshoes-backend.onrender.com/images/${product.image}`}
+          src={`${IMAGE_BASE_URL}/${product.image}`}
           alt={product.name}
         />
       </div>
@@ -111,8 +113,7 @@ function ProductCard({ product }) {
           {visibleSizes.map((size) => (
             <button
               key={size}
-              className={`size-btn ${selectedSize === size ? "selected" : ""
-                }`}
+              className={`size-btn ${selectedSize === size ? "selected" : ""}`}
               onClick={() => {
                 setSelectedSize(size);
                 setSizeError("");
