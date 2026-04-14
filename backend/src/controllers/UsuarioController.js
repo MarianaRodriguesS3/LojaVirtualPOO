@@ -7,13 +7,15 @@ class UsuarioController {
   // Registro de novo usuário
   async register(req, res) {
     try {
-      const { nome, email, password, cpf, endereco } = req.body;
+      // 1. MAPEAMENTO: Pega 'password' do body e chama de 'senha'
+      const { nome, email, password: senha, cpf, endereco } = req.body;
 
-      if (!nome || !email || !password) {
+      // 2. VALIDAÇÃO: Verifica se 'senha' (que era o password) existe
+      if (!nome || !email || !senha) {
         return res.status(400).json({ message: "Preencha todos os campos obrigatórios" });
       }
 
-      if (password.length < 8) {
+      if (senha.length < 8) {
         return res.status(400).json({ message: "A senha deve ter no mínimo 8 caracteres" });
       }
 
@@ -22,14 +24,16 @@ class UsuarioController {
         return res.status(400).json({ message: "Email já cadastrado" });
       }
 
+      // 3. EXECUÇÃO: Passa 'senha' para o Service
       const usuario = await UsuarioService.cadastrarUsuario(
-        nome, email, password, cpf, endereco
+        nome, email, senha, cpf, endereco
       );
 
       return res.status(201).json(usuario.toJSON());
 
     } catch (err) {
       console.error("Erro no registro:", err);
+      // Retornamos 400 se for erro de regra de negócio ou 500 se for erro de sintaxe/banco
       return res.status(400).json({ message: err.message });
     }
   }
