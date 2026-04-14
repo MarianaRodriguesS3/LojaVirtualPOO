@@ -86,11 +86,10 @@ function ProductCard({ product }) {
 
   return (
     <div className="product-card" ref={cardRef}>
-      
-      {/* IMAGEM CORRIGIDA */}
+
       <div className="product-image">
         <img
-          src={product.image}
+          src={`https://runshoes-backend.onrender.com/images/${product.image}`}
           alt={product.name}
         />
       </div>
@@ -112,9 +111,8 @@ function ProductCard({ product }) {
           {visibleSizes.map((size) => (
             <button
               key={size}
-              className={`size-btn ${
-                selectedSize === size ? "selected" : ""
-              }`}
+              className={`size-btn ${selectedSize === size ? "selected" : ""
+                }`}
               onClick={() => {
                 setSelectedSize(size);
                 setSizeError("");
