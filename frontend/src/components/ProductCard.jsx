@@ -29,13 +29,8 @@ function ProductCard({ product }) {
     const mouseX = e.clientX - rect.left;
     const center = rect.width / 2;
 
-    if (mouseX > center + 40) {
-      moveRight();
-    }
-
-    if (mouseX < center - 40) {
-      moveLeft();
-    }
+    if (mouseX > center + 40) moveRight();
+    if (mouseX < center - 40) moveLeft();
   };
 
   const visibleSizes = sizes.slice(centerIndex - 2, centerIndex + 3);
@@ -91,9 +86,11 @@ function ProductCard({ product }) {
 
   return (
     <div className="product-card" ref={cardRef}>
+      
+      {/* IMAGEM CORRIGIDA */}
       <div className="product-image">
         <img
-          src={`http://localhost:5000/images/${product.image}`}
+          src={product.image}
           alt={product.name}
         />
       </div>
@@ -101,10 +98,11 @@ function ProductCard({ product }) {
       <div className="product-info">
         <h3>{product.name}</h3>
 
-        {/* DESCRIÇÃO DO PRODUTO */}
         <p className="description">{product.description}</p>
 
-        <p className="price">R$ {Number(product.price).toFixed(2)}</p>
+        <p className="price">
+          R$ {Number(product.price).toFixed(2)}
+        </p>
 
         <div
           className="size-carousel"
@@ -127,7 +125,9 @@ function ProductCard({ product }) {
           ))}
         </div>
 
-        {sizeError && <p className="size-error">{sizeError}</p>}
+        {sizeError && (
+          <p className="size-error">{sizeError}</p>
+        )}
       </div>
 
       <div className="product-actions">
