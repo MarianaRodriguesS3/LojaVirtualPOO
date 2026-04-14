@@ -135,7 +135,7 @@ function EditarCadastro() {
         nome,
         cpf: cpf.replace(/\D/g, ""),
         email,
-        senha: password || undefined,
+        password: password || undefined,
         endereco: {
           cep: cep.replace(/\D/g, ""),
           rua,

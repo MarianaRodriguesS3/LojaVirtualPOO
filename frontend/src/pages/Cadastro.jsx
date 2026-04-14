@@ -129,7 +129,7 @@ function Cadastro() {
         nome,
         cpf: cpf.replace(/\D/g, ""),
         email,
-        senha: password,
+        password,
         endereco: { 
           cep: cep.replace(/\D/g, ""), 
           rua, 
