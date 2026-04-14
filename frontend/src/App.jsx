@@ -20,8 +20,8 @@ import EditarCadastro from "./pages/EditarCadastro";
 
 function App() {
   return (
-    <BrowserRouter>
-      <ScrollToTop /> {/* Aplica scroll automático para todas as rotas */}
+    <BrowserRouter basename="/LojaVirtualPOO">
+      <ScrollToTop />
       <Header />
       <CartMessage />
 
@@ -35,10 +35,41 @@ function App() {
           <Route path="/editar-cadastro" element={<EditarCadastro />} />
 
           {/* Rotas protegidas */}
-          <Route path="/carrinho" element={<ProtectedRoute> <Cart /></ProtectedRoute>} />
-          <Route path="/checkout" element={<ProtectedRoute> <Checkout /></ProtectedRoute>} />
-          <Route path="/finalizar-compra" element={<ProtectedRoute><FinalizarCompra /></ProtectedRoute>} />
-          <Route path="/status-pedido" element={<ProtectedRoute><StatusProduto /></ProtectedRoute>} />
+          <Route
+            path="/carrinho"
+            element={
+              <ProtectedRoute>
+                <Cart />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/checkout"
+            element={
+              <ProtectedRoute>
+                <Checkout />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/finalizar-compra"
+            element={
+              <ProtectedRoute>
+                <FinalizarCompra />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/status-pedido"
+            element={
+              <ProtectedRoute>
+                <StatusProduto />
+              </ProtectedRoute>
+            }
+          />
         </Routes>
       </main>
 
