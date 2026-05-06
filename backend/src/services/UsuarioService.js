@@ -2,13 +2,13 @@ const db = require('../database/connection');
 const bcrypt = require('bcryptjs');
 const Usuario = require('../models/Usuario');
 
-// --- FUNÇÕES AUXILIARES (Lista completa restaurada) ---
+// --- FUNÇÕES AUXILIARES (Geração de dados mock) ---
 const enderecosFamosos = [
   { cep: "01001-000", rua: "Praça da Sé", numero: "100", bairro: "Sé", cidade: "São Paulo", estado: "SP" },
   { cep: "20040-020", rua: "Rua do Ouvidor", numero: "200", bairro: "Centro", cidade: "Rio de Janeiro", estado: "RJ" },
   { cep: "30190-100", rua: "Avenida Afonso Pena", numero: "300", bairro: "Centro", cidade: "Belo Horizonte", estado: "MG" },
   { cep: "40020-000", rua: "Avenida Sete de Setembro", numero: "400", bairro: "Centro", cidade: "Salvador", estado: "BA" },
-  { cep: "80020-310", rua: "Rua XV de Novembro", numero: "500", bairro: "Centro", cidade: "Curitiba", estado: "PR" }
+  { cep: "80020-310", rua: "Rua XV de Novembro", numero: "500", bairro: "Centro", cidade: "Curitiba", estado: "PR" },
 ];
 
 function gerarCPF() {
@@ -49,41 +49,33 @@ class UsuarioService {
 
   // --- CADASTRO ---
   static async cadastrarUsuario(nome, email, senha, cpf = null, endereco = null) {
-    try {
-      const existingResult = await db.query("SELECT * FROM users WHERE email = $1", [email]);
-      if (existingResult.rows.length > 0) throw new Error("Email já cadastrado");
+    const [existing] = await db.query("SELECT * FROM users WHERE email = ?", [email]);
+    if (existing.length > 0) throw new Error("Email já cadastrado");
 
-      const hashedPassword = await bcrypt.hash(senha, 10);
-      const cpfFinal = cpf || gerarCPF();
+    const hashedPassword = await bcrypt.hash(senha, 10);
+    const cpfFinal = cpf || gerarCPF();
 
-      // No Postgres usamos RETURNING id
-      const userResult = await db.query(
-        "INSERT INTO users (nome, email, cpf, password) VALUES ($1, $2, $3, $4) RETURNING id",
-        [nome, email, cpfFinal, hashedPassword]
-      );
+    const [result] = await db.query(
+      "INSERT INTO users (nome, email, cpf, password) VALUES (?, ?, ?, ?)",
+      [nome, email, cpfFinal, hashedPassword]
+    );
 
-      const insertId = userResult.rows[0].id;
-      const enderecoFinal = endereco || gerarEnderecoMock();
+    const enderecoFinal = endereco || gerarEnderecoMock();
+    await db.query(
+      `INSERT INTO enderecos (usuario_id, cep, rua, numero, bairro, cidade, estado) VALUES (?, ?, ?, ?, ?, ?, ?)`,
+      [result.insertId, enderecoFinal.cep, enderecoFinal.rua, enderecoFinal.numero, enderecoFinal.bairro, enderecoFinal.cidade, enderecoFinal.estado]
+    );
 
-      await db.query(
-        "INSERT INTO enderecos (usuario_id, cep, rua, numero, bairro, cidade, estado) VALUES ($1, $2, $3, $4, $5, $6, $7)",
-        [insertId, enderecoFinal.cep, enderecoFinal.rua, enderecoFinal.numero, enderecoFinal.bairro, enderecoFinal.cidade, enderecoFinal.estado]
-      );
-
-      return new Usuario(insertId, nome, email, cpfFinal, hashedPassword, enderecoFinal);
-    } catch (err) {
-      console.error("Erro no cadastrarUsuario:", err.message);
-      throw err;
-    }
+    return new Usuario(result.insertId, nome, email, cpfFinal, hashedPassword, enderecoFinal);
   }
 
   // --- LOGIN ---
   static async logarUsuario(email, senha) {
-    const result = await db.query("SELECT * FROM users WHERE email = $1", [email]);
-    if (result.rows.length === 0) throw new Error("Usuário não encontrado");
+    const [users] = await db.query("SELECT * FROM users WHERE email = ?", [email]);
+    if (users.length === 0) throw new Error("Usuário não encontrado");
 
-    const userData = result.rows[0];
-    const endResult = await db.query("SELECT * FROM enderecos WHERE usuario_id = $1", [userData.id]);
+    const userData = users[0];
+    const [enderecos] = await db.query("SELECT * FROM enderecos WHERE usuario_id = ?", [userData.id]);
 
     const usuario = new Usuario(
       userData.id,
@@ -91,7 +83,7 @@ class UsuarioService {
       userData.email,
       userData.cpf,
       userData.password,
-      endResult.rows[0] || null
+      enderecos[0] || null
     );
 
     const senhaValida = await usuario.validarSenha(senha);
@@ -102,56 +94,56 @@ class UsuarioService {
 
   // --- BUSCAS ---
   static async buscarPorEmail(email) {
-    const result = await db.query("SELECT * FROM users WHERE email = $1", [email]);
-    if (result.rows.length === 0) return null;
+    const [users] = await db.query("SELECT * FROM users WHERE email = ?", [email]);
+    if (users.length === 0) return null;
 
-    const userData = result.rows[0];
-    const endResult = await db.query("SELECT * FROM enderecos WHERE usuario_id = $1", [userData.id]);
+    const userData = users[0];
+    const [enderecos] = await db.query("SELECT * FROM enderecos WHERE usuario_id = ?", [userData.id]);
 
-    return new Usuario(userData.id, userData.nome, userData.email, userData.cpf, userData.password, endResult.rows[0] || null);
+    return new Usuario(userData.id, userData.nome, userData.email, userData.cpf, userData.password, enderecos[0] || null);
   }
 
   static async buscarPorId(id) {
-    const result = await db.query("SELECT * FROM users WHERE id = $1", [id]);
-    if (result.rows.length === 0) return null;
+    const [users] = await db.query("SELECT * FROM users WHERE id = ?", [id]);
+    if (users.length === 0) return null;
 
-    const userData = result.rows[0];
-    const endResult = await db.query("SELECT * FROM enderecos WHERE usuario_id = $1", [id]);
+    const userData = users[0];
+    const [enderecos] = await db.query("SELECT * FROM enderecos WHERE usuario_id = ?", [id]);
 
-    return new Usuario(userData.id, userData.nome, userData.email, userData.cpf, userData.password, endResult.rows[0] || null);
+    return new Usuario(userData.id, userData.nome, userData.email, userData.cpf, userData.password, enderecos[0] || null);
   }
 
   // --- ATUALIZAÇÃO ---
   static async atualizarUsuario(id, nome, email, password = null, cpf = null, endereco = null) {
     const updates = [];
     const params = [];
-    let count = 1;
 
-    if (nome) { updates.push(`nome = $${count++}`); params.push(nome); }
-    if (email) { updates.push(`email = $${count++}`); params.push(email); }
-    if (cpf) { updates.push(`cpf = $${count++}`); params.push(cpf); }
+    if (nome) { updates.push("nome = ?"); params.push(nome); }
+    if (email) { updates.push("email = ?"); params.push(email); }
+    if (cpf) { updates.push("cpf = ?"); params.push(cpf); }
     if (password) {
       const hashedPassword = await bcrypt.hash(password, 10);
-      updates.push(`password = $${count++}`);
+      updates.push("password = ?");
       params.push(hashedPassword);
     }
 
     if (updates.length > 0) {
+      const sql = `UPDATE users SET ${updates.join(", ")} WHERE id = ?`;
       params.push(id);
-      const sql = `UPDATE users SET ${updates.join(", ")} WHERE id = $${count}`;
       await db.query(sql, params);
     }
 
     if (endereco) {
-      const check = await db.query("SELECT id FROM enderecos WHERE usuario_id = $1", [id]);
-      if (check.rows.length > 0) {
+      // Atualiza ou insere endereço
+      const [rows] = await db.query("SELECT * FROM enderecos WHERE usuario_id = ?", [id]);
+      if (rows.length > 0) {
         await db.query(
-          "UPDATE enderecos SET cep=$1, rua=$2, numero=$3, bairro=$4, cidade=$5, estado=$6 WHERE usuario_id=$7",
+          `UPDATE enderecos SET cep = ?, rua = ?, numero = ?, bairro = ?, cidade = ?, estado = ? WHERE usuario_id = ?`,
           [endereco.cep, endereco.rua, endereco.numero, endereco.bairro, endereco.cidade, endereco.estado, id]
         );
       } else {
         await db.query(
-          "INSERT INTO enderecos (usuario_id, cep, rua, numero, bairro, cidade, estado) VALUES ($1, $2, $3, $4, $5, $6, $7)",
+          `INSERT INTO enderecos (usuario_id, cep, rua, numero, bairro, cidade, estado) VALUES (?, ?, ?, ?, ?, ?, ?)`,
           [id, endereco.cep, endereco.rua, endereco.numero, endereco.bairro, endereco.cidade, endereco.estado]
         );
       }
@@ -162,9 +154,9 @@ class UsuarioService {
 
   // --- CARTÕES ---
   static async obterOuGerarCartao(usuarioId) {
-    const result = await db.query("SELECT * FROM cartoes WHERE usuario_id = $1", [usuarioId]);
+    const [rows] = await db.query("SELECT * FROM cartoes WHERE usuario_id = ?", [usuarioId]);
 
-    if (result.rows.length > 0) return result.rows[0];
+    if (rows.length > 0) return rows[0];
 
     const extras = gerarDadosExtrasCartao();
     return {
@@ -176,21 +168,21 @@ class UsuarioService {
   }
 
   static async salvarCartao(usuarioId, cartao) {
-    if (!cartao || !usuarioId) return;
+    if (!cartao || !usuarioId) return console.error("Dados do cartão ou ID ausentes");
 
     let numeroStr = Array.isArray(cartao.numero) ? cartao.numero.join('') : String(cartao.numero);
     numeroStr = numeroStr.replace(/\D/g, '');
 
-    const check = await db.query("SELECT id FROM cartoes WHERE usuario_id = $1", [usuarioId]);
+    const [rows] = await db.query("SELECT id FROM cartoes WHERE usuario_id = ?", [usuarioId]);
 
-    if (check.rows.length > 0) {
+    if (rows.length > 0) {
       await db.query(
-        "UPDATE cartoes SET numero = $1, mes = $2, ano = $3, cvv = $4 WHERE usuario_id = $5",
+        "UPDATE cartoes SET numero = ?, mes = ?, ano = ?, cvv = ? WHERE usuario_id = ?",
         [numeroStr, cartao.mes, cartao.ano, cartao.cvv, usuarioId]
       );
     } else {
       await db.query(
-        "INSERT INTO cartoes (usuario_id, numero, mes, ano, cvv) VALUES ($1, $2, $3, $4, $5)",
+        "INSERT INTO cartoes (usuario_id, numero, mes, ano, cvv) VALUES (?, ?, ?, ?, ?)",
         [usuarioId, numeroStr, cartao.mes, cartao.ano, cartao.cvv]
       );
     }
