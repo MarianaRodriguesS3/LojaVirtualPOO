@@ -3,12 +3,24 @@ html, body, #root {
   padding: 0;
   width: 100%;
   min-height: 100vh;
+}
+
+body {
   font-family: Arial, sans-serif;
   background-color: #e1ebe5;
 }
 
+#root {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
 main {
+  flex: 1;
   max-width: 1200px;
+  width: 100%;
   margin: 20px auto;
   padding: 0 15px;
+  box-sizing: border-box;
 }
