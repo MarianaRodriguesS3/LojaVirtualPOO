@@ -269,7 +269,7 @@ A página StatusPedido exibe o progresso em tempo real do rastreamento de um ped
 
 ### Integração com backend
 - Consome a lista de produtos recomendados via requisição GET utilizando a API nativa `fetch`  
-- Aponta diretamente para o ambiente de produção hospedado no Render: `https://runshoes-backend.onrender.com/api/products`  
+- Aponta para o ambiente do servidor local configurado para a aplicação: `http://localhost:5000/api/products`.
 
 ### Rastreamento e Animação
 - Estrutura baseada em etapas: Pedido Realizado, Pagamento Confirmado, Pedido Enviado, Em Trânsito e Entregue  
@@ -578,28 +578,28 @@ O modelo garante o cumprimento de boas práticas de segurança (OWASP), blindand
 O ProductController gerencia as requisições HTTP da API relacionadas aos produtos, atuando como intermediário entre as rotas de entrada e a camada de serviços (`ProductService`).
 
 ### Funcionalidades
-- Listagem geral de produtos cadastrados  
-- Criação e registro de novos produtos no catálogo  
-- Atualização cadastral de dados de um produto existente  
-- Remoção definitiva de um produto por meio de seu identificador  
+- Listagem geral de produtos cadastrados.
+- Criação e registro de novos produtos no catálogo com retorno de ID identificador.
+- Atualização cadastral de dados de um produto existente via parâmetros de URL.
+- Remoção definitiva de um produto por meio de seu identificador único.
 
-### Integração com backend
-- Interage diretamente com a camada `ProductService` para persistência e leitura de dados  
-- Instancia objetos a partir do model `Product` para garantir a validação estrutural interna antes de operações de escrita  
-- Compatível com comportamento do PostgreSQL (não depende de propriedades como `insertId` no retorno)  
+### Integração com Backend
+- Interage diretamente com a camada `ProductService` para persistência e leitura de dados no MySQL.
+- Instancia objetos a partir do model `Product` para garantir a validação estrutural interna antes de operações de escrita.
+- Captura e expõe propriedades de retorno nativas do driver `mysql2`, como o `insertId`, repassando-o na resposta para o cliente HTTP.
 
 ### Métodos e Endpoints
-- **index (GET):** Busca todos os produtos e os retorna formatados via mapeamento `toJSON()` (Status `200`)  
-- **create (POST):** Recebe o corpo da requisição, valida campos e salva o novo produto (Status `201`)  
-- **update (PUT):** Captura o ID via parâmetro de URL (`req.params`) e os novos dados no corpo para atualizar o produto (Status `200`)  
-- **delete (DELETE):** Captura o ID via URL e remove o registro correspondente, retornando uma resposta sem conteúdo (Status `204`)  
+- **`index` (GET):** Busca todos os produtos do catálogo e os retorna formatados em um array JSON via mapeamento `.toJSON()` (Status `200`).
+- **`create` (POST):** Recebe o corpo da requisição, valida os campos obrigatórios, instancia o modelo e salva o novo produto no banco, retornando uma mensagem de sucesso acompanhada do ID gerado pelo MySQL (`result.insertId`) (Status `201`).
+- **`update` (PUT):** Captura o ID via parâmetro de URL (`req.params`) e os novos dados no corpo para atualizar o produto de forma integral na tabela (Status `200`).
+- **`delete` (DELETE):** Captura o ID via URL e remove o registro correspondente do banco, retornando uma resposta vazia de sucesso (Status `204`).
 
 ### Validações e Regras
-- Validação obrigatória de preenchimento para os campos `name`, `price` e `image` no método de criação, retornando erro de requisição inválida (Status `400`) caso falte algum  
-- Isolamento de falhas internas com blocos `try/catch` em todos os métodos, registrando erros no console e emitindo respostas padronizadas de falha no servidor (Status `500`)  
+- **Validação de Campos:** Checagem obrigatória de preenchimento para os atributos `name`, `price` e `image` no método de criação, retornando erro de requisição inválida (Status `400` - "Campos obrigatórios faltando") caso algum esteja ausente.
+- **Tratamento de Exceções:** Isolamento de falhas internas com blocos `try/catch` em todos os métodos, registrando erros detalhados no console do servidor e emitindo respostas padronizadas de falha (Status `500`) para o frontend.
 
 ### Controle e Exportação
-- Exporta uma instância única da classe (`new ProductController()`) no padrão CommonJS para acoplamento direto no arquivo de rotas Express  
+- Exporta uma instância única da classe (`new ProductController()`) no padrão CommonJS para acoplamento direto e simplificado no arquivo de rotas Express.
 
 O controlador padroniza as respostas de API para o gerenciamento de produtos, aplicando códigos de status HTTP corretos e blindando a aplicação contra falhas não tratadas.
 
@@ -648,66 +648,66 @@ O controlador funciona como o núcleo operacional de segurança e transações d
 
 ## <a name="service-productservice"></a>🛠️ Service ProductService
 
-O ProductService é responsável pela lógica de persistência e manipulação direta dos dados de produtos no banco de dados PostgreSQL.
+O ProductService é responsável pela lógica de persistência e manipulação direta dos dados de produtos no banco de dados MySQL.
 
 ### Funcionalidades
-- Criação e inserção de novos produtos no banco de dados  
-- Listagem global de todos os itens do catálogo  
-- Busca refinada de produtos por ID  
-- Atualização completa dos campos de um produto  
-- Remoção lógica ou física de um item pelo seu identificador  
+- Criação e inserção de novos produtos no banco de dados.
+- Listagem global de todos os itens do catálogo.
+- Busca refinada de produtos por ID.
+- Atualização completa dos campos de um produto.
+- Remoção física de um item pelo seu identificador.
 
-### Integração com backend
-- Utiliza o módulo pooling de conexão (`db`) configurado em `../database/connection`  
-- Executa consultas SQL estruturadas utilizando parametrização segura (`$1`, `$2`, etc.) para prevenir ataques de SQL Injection  
-- Instancia e mapeia os resultados brutos de consultas de leitura (SELECT) de volta em objetos válidos do model `Product`  
+### Integração com Backend
+- **Driver de Conexão:** Utiliza o pool de conexões do **MySQL** (`db`) configurado em `../database/connection`.
+- **Prepared Statements:** Executa consultas utilizando parametrização segura com placeholders de interrogação (`?`), prevenindo ataques de SQL Injection de forma nativa.
+- **Mapeamento de Objetos:** No método de listagem e busca, instancia e mapeia os resultados brutos de tabelas (`rows`) de volta em objetos válidos do model `Product`.
 
 ### Métodos e Operações de Banco
-- **create(product):** Executa um comando `INSERT` contendo as propriedades do produto e utiliza a cláusula `RETURNING *` para obter o registro recém-criado  
-- **findAll():** Executa um `SELECT *` na tabela de produtos e converte as linhas (*rows*) retornadas em um array de instâncias da classe `Product`  
-- **findById(id):** Filtra um produto por ID, tratando cenários vazios ao retornar `null` caso nenhuma linha seja encontrada  
-- **update(id, product):** Executa uma instrução `UPDATE` modificando todas as propriedades do item com base no ID e retorna o registro modificado  
-- **delete(id):** Executa uma consulta `DELETE` filtrada por ID e devolve as informações do produto removido  
+- **`create(product)`:** Executa uma instrução `INSERT` com os dados do produto via `db.execute()`, retornando o objeto de resultado do driver contendo os metadados da inserção (como o ID gerado).
+- **`findAll()`:** Executa um `SELECT *` na tabela de produtos e utiliza a função `.map()` para converter o array de linhas brutas em uma coleção de instâncias da classe `Product`.
+- **`findById(id)`:** Filtra um produto por ID por meio de uma query parametrizada, retornando uma nova instância de `Product` se encontrado, ou `null` caso o array de resultados venha vazio.
+- **`update(id, product)`:** Executa um comando `UPDATE` modificando todas as propriedades do item na tabela com base no ID da URL e retorna o resultado da operação emitido pelo banco.
+- **`delete(id)`:** Executa uma instrução `DELETE` filtrada por ID e devolve o objeto de confirmação da remoção.
 
 ### Validações e Regras
-- Métodos definidos como estáticos (`static`), permitindo chamadas diretas pelo controller sem a necessidade de instanciar a classe  
-- Uso generalizado da cláusula `RETURNING *` nativa do PostgreSQL para otimizar o fluxo e evitar consultas adicionais de checagem  
+- **Métodos Estáticos:** Funções definidas com a palavra-chave `static`, permitindo chamadas diretas pelo controller sem a necessidade de instanciar a classe `ProductService` na memória.
+- **Performance com `execute`:** O uso do método `db.execute()` para operações de escrita (`INSERT`, `UPDATE`, `DELETE`) otimiza a execução no MySQL, pois prepara a query no servidor antes de enviar os dados.
 
 ### Controle e Exportação
-- Exporta a classe pura `ProductService` no formato CommonJS para consumo desacoplado nas camadas superiores da aplicação  
+- Exporta a classe pura `ProductService` no formato CommonJS (`module.exports`) para consumo desacoplado nas camadas superiores da aplicação (Controllers).
 
-O serviço isola a sintaxe e a comunicação SQL do restante da aplicação, assegurando que alterações na estrutura do banco de dados não quebrem a lógica dos controladores.
+O serviço isola a sintaxe e a comunicação SQL do restante da aplicação, assegurando que alterações na estrutura das tabelas do MySQL não quebrem a lógica dos controladores HTTP.
 
 ---
 
 ## <a name="service-usuarioservice"></a>🛠️ Service UsuarioService
 
-O UsuarioService centraliza as regras de negócio complexas do sistema de usuários, abrangendo desde autenticação e criptografia até a geração de dados simulados (*mock*) para testes e preenchimento ágil.
+O UsuarioService centraliza as regras de negócio complexas do sistema de usuários, abrangendo desde a autenticação e criptografia de senhas até a geração automática de dados simulados (*mock*) para testes e preenchimento ágil no frontend.
 
 ### Funcionalidades
-- Gerenciamento de persistência para as tabelas `users`, `enderecos` e `cartoes`  
-- Autenticação de login com verificação criptográfica de senhas  
-- Lógica de atualização dinâmica e parcial de dados do perfil  
-- Geração automática de CPFs, cartões de crédito e endereços brasileiros válidos  
+- Gerenciamento de persistência condicional para as tabelas `users`, `enderecos` e `cartoes`.
+- Autenticação de login baseada na validação de hashes criptográficos.
+- Lógica de atualização dinâmica de perfil (modifica apenas os campos enviados).
+- Mecanismo integrado de geração de massa de dados (CPFs, cartões e endereços válidos).
 
-### Integração com backend
-- Utiliza o pool de conexão do PostgreSQL (`db`) para realizar transações estruturadas  
-- Aplica hash seguro em novas senhas utilizando a biblioteca `bcryptjs`  
-- Converte os retornos do banco em instâncias tipadas utilizando o model `Usuario`  
+### Integração com Backend
+- **Driver de Conexão:** Utiliza o pool do **MySQL** (`db`) com suporte a Promises (`async/await`) para transações e consultas relacionais.
+- **Segurança Criptográfica:** Aplica hash seguro em novas senhas utilizando a biblioteca `bcryptjs`.
+- **Mapeamento de Objetos:** Transforma os resultados de arrays puros vindos do banco de dados em instâncias da classe/model `Usuario`.
 
 ### Métodos e Lógica de Negócio
-- **gerarDadosIniciais / gerarDadosMock:** Fornecem objetos estruturados contendo dados simulados para acelerar os formulários do frontend.
-- **cadastrarUsuario:** Cria o usuário de forma atômica no banco, gera hashes seguros, atribui dados complementares se omitidos e vincula um registro na tabela de endereços.
-- **logarUsuario:** Realiza a busca pelo email e valida a senha enviada por meio do método interno do model, retornando a instância completa do usuário.
-- **buscarPorEmail / buscarPorId:** Realizam consultas agregadas (SELECT) unificando dados cadastrais e de endereço do cliente.
-- **atualizarUsuario:** Monta queries SQL dinamicamente baseando-se apenas nos campos enviados (evitando sobrescritas parciais) e executa o `UPDATE` ou `INSERT` na tabela de endereços de forma condicional.
-- **obterOuGerarCartao:** Verifica a existência de um cartão salvo; caso não encontre, gera dados de teste plausíveis (Número, Mês, Ano e CVV).
-- **salvarCartao:** Limpa caracteres não numéricos do cartão e gerencia a inserção ou atualização dos dados financeiros do usuário.
+- **`gerarDadosIniciais` / `gerarDadosMock`:** Fornecem objetos mockados (estruturando CEPs reais e gerando strings de CPF válidas) para acelerar o fluxo de testes na interface.
+- **`cadastrarUsuario`:** Valida a existência prévia do e-mail. Se disponível, insere o novo usuário e aproveita o identificador autoincrementável do MySQL (`result.insertId`) para criar e vincular imediatamente o registro de endereço na tabela correspondente.
+- **`logarUsuario`:** Localiza o registro na tabela `users`, recupera o endereço associado, instancia o modelo e delega a checagem da senha ao método interno do model `Usuario`.
+- **`buscarPorEmail` / `buscarPorId`:** Realizam consultas sequenciais nas tabelas `users` e `enderecos` para montar e retornar o perfil completo do cliente de forma estruturada.
+- **`atualizarUsuario`:** Monta a query SQL de `UPDATE` na tabela `users` dinamicamente em tempo de execução com base nos campos preenchidos. Para o endereço, realiza um `SELECT` prévio e executa uma bifurcação lógica: atualiza (`UPDATE`) se o registro existir, ou insere (`INSERT`) caso não encontre.
+- **`obterOuGerarCartao`:** Verifica se há dados financeiros na tabela `cartoes`. Caso negativo, gera um objeto temporário com número de 16 dígitos, data de expiração coerente e código CVV em tempo real.
+- **`salvarCartao`:** Trata a entrada do número removendo caracteres não numéricos via Expressão Regular e gerencia a inserção ou atualização na tabela `cartoes` utilizando uma estrutura de checagem condicional prévia.
 
 ### Controle e Exportação
 - Exporta diretamente a classe `UsuarioService` com métodos estáticos (`static`) no padrão CommonJS para consumo desacoplado pelas camadas de controle.
 
-O serviço funciona como o motor de regras da aplicação de usuários, isolando a complexidade das consultas SQL relacionais e encapsulando as políticas de segurança da plataforma.
+O serviço funciona como o coração das regras de negócio de clientes na aplicação, isolando as consultas estruturadas do MySQL e garantindo que o banco de dados permaneça consistente e limpo.
 
 ---
 
@@ -869,28 +869,26 @@ Este arquivo estabelece as regras de tráfego de rede e segurança da API, garan
 
 ## <a name="init-server"></a>🚀 Inicialização do Servidor (Server)
 
-O arquivo de inicialização é o ponto de entrada principal (*entry point*) do backend. Ele é responsável por colocar o servidor Express em execução e disparar a conexão assíncrona com o banco de dados.
+O arquivo de inicialização é o ponto de entrada principal (*entry point*) do backend. Ele encapsula a lógica de boot em uma Função Autoinvocável Assíncrona (IIFE), garantindo que o servidor só passe a receber requisições após a validação bem-sucedida da infraestrutura de dados.
 
-### Funcionalidades
-- Inicialização e escuta da porta de rede para o servidor HTTP  
-- Gerenciamento do fluxo de inicialização otimizado para plataformas em nuvem  
-- Ativação da conexão com o banco de dados PostgreSQL em segundo plano  
+#### Funcionalidades
+* Teste prévio de conectividade com o banco de dados MySQL.
+* Inicialização condicional do servidor HTTP Express.
+* Tratamento centralizado de erros críticos de infraestrutura no momento do *boot*.
 
-### Integração com backend
-- Importa o aplicativo Express totalmente configurado (`app`)  
-- Consome a instância de conexão do banco de dados (`db`) para validar o acesso à persistência  
-- Utiliza variáveis de ambiente injetadas pelo ecossistema do servidor para definição de portas  
+#### Integração com Backend
+* Importa o aplicativo Express totalmente configurado (`app`).
+* Consome o pool de conexões do MySQL (`db`) para executar uma consulta de validação.
 
-### Configurações de Porta e Variáveis
-- **process.env.PORT:** Captura dinamicamente a porta designada pelo ambiente de produção do **Render** - **Fallback Local:** Assume automaticamente a porta `5000` caso nenhuma variável de ambiente seja detectada (desenvolvimento local)  
+#### Configurações de Porta
+* **Fixação de Porta:** Configura de forma explícita o servidor para escutar na porta local `5000` (`http://localhost:5000`).
 
-### Validações e Regras de Inicialização
-- **Prioridade de Inicialização:** O método `app.listen` é disparado imediatamente no início do script. Essa ordem é crucial para que o **Render** valide o *healthcheck* de deploy e evite timeouts de inicialização.  
-- **Conexão Assíncrona:** A conexão com o banco (`db.connect`) roda em paralelo por meio de Promises (`.then` / `.catch`), garantindo que falhas momentâneas na rede do banco de dados não causem o travamento completo do carregamento inicial do servidor.  
+#### Validações e Regras de Inicialização
+* **Bloqueio por Dependência (Garantia de Persistência):** Utiliza o operador `await` para executar a query de teste `SELECT 1`. O servidor Express (`app.listen`) **só é ativado se o MySQL responder com sucesso**. Isso impede que a API fique online em um estado "inoperante" caso o banco de dados esteja fora do ar (como com o XAMPP desligado).
+* **Resiliência e Tratamento de Falhas:** Todo o fluxo de inicialização está envolvido em um bloco `try/catch`. Caso a conexão com o MySQL falhe, o erro é capturado, exibido detalhadamente no console com o prefixo `❌ Falha ao conectar no banco:` e o processo de inicialização do servidor HTTP é abortado de forma segura.
 
-### Controle e Execução
-- Centraliza os logs de diagnóstico iniciais (`console.log`) informando o sucesso da execução do servidor e do banco, ou exibindo detalhes estruturados de erros em caso de falha de conexão.  
-
-Este arquivo consolida a orquestração de boot do ecossistema, unindo a infraestrutura de rede do Express com a camada de persistência para disponibilizar a API em produção.
-
+#### Controle e Execução
+* Centraliza os logs de diagnóstico iniciais (`console.log`) informando de forma clara o status do ecossistema: 
+  * `✅ Banco conectado`
+  * `🚀 Servidor rodando em http://localhost:5000`
 
